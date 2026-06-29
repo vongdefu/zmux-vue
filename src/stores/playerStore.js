@@ -1,6 +1,7 @@
 import { computed, reactive } from 'vue';
 import { fetchTrackDetails, searchSource } from '../services/musicApi';
 import { createLibrarySnapshot, deserializeTrack, loadLibrary, saveLibrary } from '../services/libraryStorage';
+import { fetchPlaylistTracks, fetchDiscoverPlaylists } from '../services/recommendedPlaylists';
 import { parseLrc } from '../utils/lyrics';
 
 const persisted = loadLibrary();
@@ -33,7 +34,12 @@ const state = reactive({
   libraryView: 'favorites',
   playerOpen: false,
   statusText: '准备就绪',
-  toast: ''
+  toast: '',
+  recommendedPlaylists: [],
+  recommendedView: 'browse',
+  selectedRecommendedId: null,
+  recommendedLoading: false,
+  consecutiveSkipCount: 0
 });
 
 rebuildTrackMap();
@@ -43,6 +49,9 @@ const activeList = computed(() => {
   if (state.playContext.type === 'favorites') return state.favorites;
   if (state.playContext.type === 'playlist') {
     return state.playlists.find((playlist) => playlist.id === state.playContext.playlistId)?.tracks || [];
+  }
+  if (state.playContext.type === 'recommended') {
+    return state.recommendedPlaylists.find((playlist) => playlist.id === state.playContext.playlistId)?.tracks || [];
   }
   return orderedResults.value.length ? orderedResults.value : state.searchResults;
 });
@@ -78,7 +87,11 @@ function usePlayerStore() {
     showToast,
     toggleFavorite,
     updateAudioState,
-    updateLyricIndex
+    updateLyricIndex,
+    fetchRecommendedPlaylists,
+    fetchRecommendedPlaylistTracks,
+    selectRecommendedPlaylist,
+    resetSkipCounter
   };
 }
 
@@ -177,9 +190,11 @@ function loadMore() {
 }
 
 async function playFromList(type, index, playlistId = null) {
+  state.consecutiveSkipCount = 0;
   let list = [];
   if (type === 'favorites') list = state.favorites;
   else if (type === 'playlist') list = state.playlists.find((playlist) => playlist.id === playlistId)?.tracks || [];
+  else if (type === 'recommended') list = state.recommendedPlaylists.find((playlist) => playlist.id === playlistId)?.tracks || [];
   else list = orderedResults.value.length ? orderedResults.value : state.searchResults;
 
   if (!list.length) {
@@ -368,13 +383,64 @@ function setPlayMode(mode) {
 }
 
 function rebuildTrackMap() {
-  [...state.favorites, ...state.playHistory, ...state.playlists.flatMap((playlist) => playlist.tracks || [])].forEach((track) => {
+  [...state.favorites, ...state.playHistory, ...state.playlists.flatMap((playlist) => playlist.tracks || []), ...state.recommendedPlaylists.flatMap((playlist) => playlist.tracks || [])].forEach((track) => {
     if (track?.uid) state.trackMap.set(track.uid, track);
   });
 }
 
 function save() {
   saveLibrary(state.favorites, state.playlists, state.playHistory);
+}
+
+async function fetchRecommendedPlaylists() {
+  if (state.recommendedPlaylists.length) return;
+
+  state.recommendedLoading = true;
+  try {
+    const list = await fetchDiscoverPlaylists();
+    state.recommendedPlaylists = list.map((item) => ({
+      id: item.id,
+      name: item.name,
+      tracks: []
+    }));
+  } catch (error) {
+    console.warn('获取推荐歌单失败', error);
+    showToast('获取推荐歌单失败，请稍后再试');
+  } finally {
+    state.recommendedLoading = false;
+  }
+}
+
+async function fetchRecommendedPlaylistTracks(playlistId) {
+  const playlist = state.recommendedPlaylists.find((item) => item.id === playlistId);
+  if (!playlist) return;
+  if (playlist.tracks.length) return;
+
+  state.recommendedLoading = true;
+  try {
+    const tracks = await fetchPlaylistTracks(playlistId);
+    tracks.forEach((track) => {
+      if (!track?.uid || state.trackMap.has(track.uid)) return;
+      state.trackMap.set(track.uid, track);
+    });
+    playlist.tracks = tracks;
+  } catch (error) {
+    console.warn('获取推荐歌单失败', error);
+    showToast('获取歌单失败，请重试');
+  } finally {
+    state.recommendedLoading = false;
+  }
+}
+
+async function selectRecommendedPlaylist(playlistId) {
+  await fetchRecommendedPlaylistTracks(playlistId);
+  state.selectedRecommendedId = playlistId;
+  state.recommendedView = 'detail';
+  return playFromList('recommended', 0, playlistId);
+}
+
+function resetSkipCounter() {
+  state.consecutiveSkipCount = 0;
 }
 
 function showToast(message) {

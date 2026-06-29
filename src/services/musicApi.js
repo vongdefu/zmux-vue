@@ -28,7 +28,7 @@ function pickQueryParam(rawUrl, key) {
   }
 }
 
-function normalizeTrack(track) {
+export function normalizeTrack(track) {
   return {
     album: '',
     artist: '',
