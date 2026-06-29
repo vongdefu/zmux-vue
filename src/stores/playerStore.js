@@ -36,8 +36,6 @@ const state = reactive({
   statusText: '准备就绪',
   toast: '',
   recommendedPlaylists: [],
-  recommendedView: 'browse',
-  selectedRecommendedId: null,
   recommendedLoading: false,
   consecutiveSkipCount: 0
 });
@@ -90,6 +88,7 @@ function usePlayerStore() {
     updateLyricIndex,
     fetchRecommendedPlaylists,
     fetchRecommendedPlaylistTracks,
+    refreshRecommendedPlaylists,
     selectRecommendedPlaylist,
     resetSkipCounter
   };
@@ -401,6 +400,7 @@ async function fetchRecommendedPlaylists() {
     state.recommendedPlaylists = list.map((item) => ({
       id: item.id,
       name: item.name,
+      cover: item.cover || null,
       tracks: []
     }));
   } catch (error) {
@@ -408,6 +408,14 @@ async function fetchRecommendedPlaylists() {
     showToast('获取推荐歌单失败，请稍后再试');
   } finally {
     state.recommendedLoading = false;
+  }
+}
+
+async function refreshRecommendedPlaylists() {
+  state.recommendedPlaylists = [];
+  await fetchRecommendedPlaylists();
+  if (state.recommendedPlaylists.length) {
+    showToast('歌单已刷新');
   }
 }
 
@@ -434,8 +442,6 @@ async function fetchRecommendedPlaylistTracks(playlistId) {
 
 async function selectRecommendedPlaylist(playlistId) {
   await fetchRecommendedPlaylistTracks(playlistId);
-  state.selectedRecommendedId = playlistId;
-  state.recommendedView = 'detail';
   return playFromList('recommended', 0, playlistId);
 }
 
