@@ -1,25 +1,29 @@
 import { normalizeTrack } from './musicApi';
 
+const DISCOVER_URL = 'https://music.163.com/discover';
+
+const FALLBACK_PLAYLISTS = [
+  { id: '3778678', name: '云音乐热歌榜' },
+  { id: '3779629', name: '云音乐新歌榜' },
+  { id: '2884035', name: '云音乐飙升榜' },
+  { id: '19723756', name: '云音乐说唱榜' },
+  { id: '2250013', name: '抖音排行榜' },
+  { id: '7459562', name: '电竞音乐榜' },
+  { id: '108550346', name: '华语金曲' },
+  { id: '71385702', name: '怀旧经典' },
+  { id: '99160243', name: '独立小众' },
+];
+
 function getIdFromUrl(url) {
   const match = url.match(/[?&]id=(\d+)/);
   return match ? match[1] : '';
 }
 
 /**
- * 请求网易云音乐发现页，解析页面中所有歌单 a 标签，提取歌单 ID 和名称。
- * 等价于 parsePlaylist.js 中 cheerio 解析部分，但运行在浏览器端，用 DOMParser 代替 cheerio。
+ * 解析网易云发现页 HTML，提取所有歌单链接的 ID 和名称。
  */
-export async function fetchDiscoverPlaylists() {
-  const proxyUrl = '/api/proxy/netease/discover';
-
-  const response = await fetch(proxyUrl);
-  if (!response.ok) {
-    throw new Error(`请求发现页失败: ${response.status}`);
-  }
-
-  const html = await response.text();
+function parseDiscoverHtml(html) {
   const doc = new DOMParser().parseFromString(html, 'text/html');
-
   const seen = new Set();
   const playlists = [];
 
@@ -43,8 +47,48 @@ export async function fetchDiscoverPlaylists() {
 }
 
 /**
- * 通过 Meting API 获取歌单内的歌曲列表
- * 返回的歌曲格式与音乐搜索 API 完全一致，可被 TrackList 和 PlayerDock 直接使用
+ * 通过指定 URL 获取发现页并解析歌单列表。
+ */
+async function tryFetchDiscover(fetchUrl) {
+  const response = await fetch(fetchUrl);
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}`);
+  }
+  const html = await response.text();
+  return parseDiscoverHtml(html);
+}
+
+/**
+ * 请求网易云音乐发现页，解析页面中所有歌单 a 标签。
+ *
+ * 三层降级策略：
+ * 1. Vite dev proxy（yarn dev 时可用）
+ * 2. 公共 CORS 代理（GitHub Pages 等静态托管环境）
+ * 3. 内置静态歌单列表（兜底）
+ */
+export async function fetchDiscoverPlaylists() {
+  // 1) Vite 开发代理
+  try {
+    return await tryFetchDiscover('/api/proxy/netease/discover');
+  } catch (e) {
+    console.warn('Vite dev proxy 失败，尝试 CORS 代理...', e.message);
+  }
+
+  // 2) 公共 CORS 代理
+  try {
+    const corsProxyUrl = `https://corsproxy.io/?${encodeURIComponent(DISCOVER_URL)}`;
+    return await tryFetchDiscover(corsProxyUrl);
+  } catch (e) {
+    console.warn('CORS 代理失败，使用静态歌单兜底...', e.message);
+  }
+
+  // 3) 静态兜底歌单
+  return FALLBACK_PLAYLISTS;
+}
+
+/**
+ * 通过 Meting API 获取歌单内的歌曲列表。
+ * 返回的歌曲格式与音乐搜索 API 完全一致，可被 TrackList 和 PlayerDock 直接使用。
  */
 export async function fetchPlaylistTracks(playlistId) {
   const apiUrl = `https://api.qijieya.cn/meting/?type=playlist&id=${encodeURIComponent(playlistId)}`;
