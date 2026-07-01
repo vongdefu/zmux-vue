@@ -66,7 +66,7 @@ function weekInfoForMonday(monday, firstMonday) {
   return {
     id: `${year}-W${String(weekNum).padStart(2, '0')}`,
     monday: localDateStr(monday),
-    label: `第 ${weekNum} 周（${fmtMMDD(monday)}-${fmtMMDD(sunday)}）`,
+    label: `第 ${String(weekNum).padStart(2, '0')} 周（${fmtMMDD(monday)}-${fmtMMDD(sunday)}）`,
     start: fmtMMDD(monday),
     end: fmtMMDD(sunday),
     weekNum,
