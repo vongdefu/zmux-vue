@@ -471,7 +471,6 @@ async function fetchRecommendedPlaylistTracks(playlistId) {
 
 async function selectRecommendedPlaylist(playlistId) {
   await fetchRecommendedPlaylistTracks(playlistId);
-  return playFromList('recommended', 0, playlistId);
 }
 
 function resetSkipCounter() {

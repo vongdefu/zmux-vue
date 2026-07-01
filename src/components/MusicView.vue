@@ -199,7 +199,11 @@ function backToBrowse() {
           >收藏歌单</button>
         </div>
 
+        <div v-if="store.state.recommendedLoading" class="empty-state">
+          正在加载歌曲…
+        </div>
         <TrackList
+          v-else
           :tracks="selectedPlaylist?.tracks || []"
           :current-track="store.state.currentTrack"
           :is-favorite="store.isFavorite"
