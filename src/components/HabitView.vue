@@ -167,23 +167,25 @@ const totalCompletions = computed(() => {
           <span class="graph-total">{{ totalCompletions }} 次打卡</span>
         </div>
 
-        <div class="graph-scroll-area" ref="graphScrollRef">
-          <!-- 月份 + 格子合成一个可横向滚动的整体 -->
-          <div class="graph-scroll-inner">
-            <!-- 月份标签 -->
-            <div class="graph-months" :style="{ gridTemplateColumns: `repeat(${graphData.weeks}, 1fr)` }">
-              <span
-                v-for="ml in graphData.monthLabels"
-                :key="ml.col"
-                :style="{ gridColumn: ml.col + 1 }"
-              >{{ ml.label }}</span>
-            </div>
+        <div class="graph-main">
+          <!-- 星期标签（固定，不滚动） -->
+          <div class="graph-day-labels">
+            <span v-for="(label, i) in DAY_LABELS" :key="i">{{ label }}</span>
+          </div>
 
-            <!-- 星期 + 格子行 -->
-            <div class="graph-body">
-              <div class="graph-day-labels">
-                <span v-for="(label, i) in DAY_LABELS" :key="i">{{ label }}</span>
+          <!-- 月份 + 格子（可横向滚动） -->
+          <div class="graph-scroll-area" ref="graphScrollRef">
+            <div class="graph-scroll-inner">
+              <!-- 月份标签 -->
+              <div class="graph-months" :style="{ gridTemplateColumns: `repeat(${graphData.weeks}, 1fr)` }">
+                <span
+                  v-for="ml in graphData.monthLabels"
+                  :key="ml.col"
+                  :style="{ gridColumn: ml.col + 1 }"
+                >{{ ml.label }}</span>
               </div>
+
+              <!-- 格子 -->
               <div
                 class="graph-grid"
                 :style="{ gridTemplateColumns: `repeat(${graphData.weeks}, 1fr)` }"
@@ -324,13 +326,27 @@ const totalCompletions = computed(() => {
 .graph-header h2 { margin: 0; font-size: 16px; }
 .graph-total { color: var(--text-secondary); font-size: 12px; font-weight: 600; }
 
+/* 图主体：固定标签 + 滚动区 */
+.graph-main {
+  display: flex;
+}
+.graph-day-labels {
+  display: grid; grid-template-rows: repeat(7, 1fr); gap: 2px;
+  font-size: 10px; color: var(--text-tertiary); font-weight: 600;
+  flex-shrink: 0; padding-top: 15px;  /* 与格子对齐（月份行高度） */
+  margin-right: 4px;
+}
+.graph-day-labels span {
+  height: 16px; display: flex; align-items: center; justify-content: center;
+  width: 16px;
+}
+
 /* 横向滚动区域 */
 .graph-scroll-area {
+  flex: 1;
   overflow-x: auto;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
-  margin: 0 -4px;
-  padding: 0 4px;
 }
 .graph-scroll-area::-webkit-scrollbar { height: 0; }
 .graph-scroll-inner {
@@ -341,23 +357,11 @@ const totalCompletions = computed(() => {
 /* 月份标签 */
 .graph-months {
   display: grid;
-  padding-left: 28px;
   font-size: 10px; color: var(--text-tertiary); font-weight: 600;
   margin-bottom: 2px;
 }
 
-/* 主体：星期标签 + 格子 */
-.graph-body {
-  display: flex; gap: 4px;
-}
-.graph-day-labels {
-  display: grid; grid-template-rows: repeat(7, 1fr); gap: 2px;
-  font-size: 10px; color: var(--text-tertiary); font-weight: 600;
-  flex-shrink: 0; padding-top: 1px;
-}
-.graph-day-labels span {
-  height: 16px; display: flex; align-items: center;
-}
+/* 格子 */
 .graph-grid {
   display: grid;
   grid-template-rows: repeat(7, 1fr);
