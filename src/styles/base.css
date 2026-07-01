@@ -24,6 +24,7 @@ body,
 
 body {
   overflow: hidden;
+  background: #1a1a1a;
 }
 
 button,
@@ -31,12 +32,22 @@ input {
   font: inherit;
 }
 
+/* ---- 手机尺寸容器，桌面端居中 ---- */
+.phone-app {
+  width: 100%;
+  max-width: 430px;
+  height: 100vh;
+  height: 100dvh;
+  margin: 0 auto;
+  overflow: hidden;
+  background: var(--bg-canvas);
+}
+
 /* ---- 主容器 ---- */
 .app-screen {
   position: relative;
   width: 100%;
-  height: 100vh;
-  height: 100dvh;
+  height: 100%;
   overflow: hidden;
   background: var(--bg-canvas);
   padding-top: env(safe-area-inset-top, 0px);
