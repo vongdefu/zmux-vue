@@ -190,9 +190,15 @@ const totalCompletions = computed(() => {
 
           <!-- 月份 + 格子（可横向滚动） -->
           <div class="graph-scroll-area" ref="graphScrollRef">
-            <div class="graph-scroll-inner">
+            <div
+              class="graph-scroll-inner"
+              :style="{ width: `${graphData.weeks * 18}px` }"
+            >
               <!-- 月份标签 -->
-              <div class="graph-months" :style="{ gridTemplateColumns: `repeat(${graphData.weeks}, 1fr)` }">
+              <div
+                class="graph-months"
+                :style="{ gridTemplateColumns: `repeat(${graphData.weeks}, 1fr)` }"
+              >
                 <span
                   v-for="ml in graphData.monthLabels"
                   :key="ml.col"
@@ -295,18 +301,14 @@ const totalCompletions = computed(() => {
 
 <style scoped>
 .habit-view {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
+  width: 100%; height: 100%;
+  display: flex; flex-direction: column;
 }
 
 /* ---- 顶栏 ---- */
 .habit-top-bar {
   flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  gap: 14px;
+  display: flex; align-items: center; gap: 14px;
   padding: 14px 18px 10px;
 }
 .habit-back {
@@ -315,18 +317,14 @@ const totalCompletions = computed(() => {
   background: rgba(118,118,128,0.1);
   color: var(--text-secondary);
   font-size: 16px; cursor: pointer;
-  flex-shrink: 0;
   display: grid; place-items: center;
 }
 .habit-top-bar h1 { margin: 0; font-size: 22px; font-weight: 800; }
 
-/* ---- 内容 ---- */
+/* ---- 内容区 ---- */
 .habit-content {
-  flex: 1;
-  min-width: 0;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding: 6px 18px 120px;
+  flex: 1; overflow-y: auto;
+  padding: 0 18px 120px;
   display: flex; flex-direction: column; gap: 12px;
 }
 
@@ -343,14 +341,16 @@ const totalCompletions = computed(() => {
 .graph-header h2 { margin: 0; font-size: 16px; }
 .graph-total { color: var(--text-secondary); font-size: 12px; font-weight: 600; }
 
-/* 图主体：固定标签 + 滚动区 */
+/* 图主体：标签 + 滚动区 */
 .graph-main {
   display: flex;
 }
+
+/* 星期标签（固定，不滚动） */
 .graph-day-labels {
   display: grid; grid-template-rows: repeat(7, 1fr); gap: 2px;
   font-size: 10px; color: var(--text-tertiary); font-weight: 600;
-  flex-shrink: 0; padding-top: 15px;  /* 与格子对齐（月份行高度） */
+  flex-shrink: 0; padding-top: 15px;
   margin-right: 4px;
 }
 .graph-day-labels span {
@@ -358,18 +358,18 @@ const totalCompletions = computed(() => {
   width: 16px;
 }
 
-/* 横向滚动区域 */
+/* 滚动区：标签 + 格子放一起，但格子可滚 */
 .graph-scroll-area {
-  flex: 1;
-  min-width: 0;
-  overflow-x: auto;
-  overflow-y: hidden;
+  flex: 1; min-width: 0;
+  overflow-x: auto; overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
+  /* 关键：限制滚动区本身不超出父容器 */
+  contain: strict;
 }
 .graph-scroll-area::-webkit-scrollbar { height: 0; }
+
 .graph-scroll-inner {
   display: flex; flex-direction: column; gap: 2px;
-  width: max-content;
 }
 
 /* 月份标签 */
@@ -377,6 +377,7 @@ const totalCompletions = computed(() => {
   display: grid;
   font-size: 10px; color: var(--text-tertiary); font-weight: 600;
   margin-bottom: 2px;
+  white-space: nowrap;
 }
 
 /* 格子 */
@@ -386,7 +387,6 @@ const totalCompletions = computed(() => {
   gap: 2px;
 }
 
-/* 格子 */
 .graph-cell {
   width: 16px; height: 16px;
   border-radius: 3px;
@@ -398,11 +398,7 @@ const totalCompletions = computed(() => {
 .graph-cell.level-3 { background: #239a3b; }
 .graph-cell.level-4 { background: #196127; }
 
-.graph-cell.future {
-  opacity: 0;
-  pointer-events: none;
-}
-
+.graph-cell.future { opacity: 0; pointer-events: none; }
 .graph-cell.selected {
   outline: 2px solid var(--accent);
   outline-offset: 1px;
@@ -442,15 +438,13 @@ const totalCompletions = computed(() => {
   gap: 10px; align-items: center;
   min-height: 48px; padding: 8px 6px;
   border-radius: 14px;
-  transition: background 0.16s ease;
 }
 .habit-dot {
   width: 26px; height: 26px;
   border: 2px solid; border-radius: 999px;
-  background: transparent; cursor: pointer; flex-shrink: 0;
+  background: transparent; cursor: pointer;
   display: grid; place-items: center;
   font-size: 12px; color: white;
-  transition: all 0.16s ease;
 }
 .habit-name {
   min-width: 0; font-size: 15px; font-weight: 600;
@@ -458,14 +452,14 @@ const totalCompletions = computed(() => {
   overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
 }
 .habit-streak {
-  font-size: 12px; font-weight: 700; flex-shrink: 0;
+  font-size: 12px; font-weight: 700;
   min-width: 32px; text-align: right;
 }
 .habit-del {
   width: 28px; height: 28px;
   border: 0; border-radius: 999px;
   background: transparent; color: var(--text-tertiary);
-  font-size: 18px; cursor: pointer; flex-shrink: 0;
+  font-size: 18px; cursor: pointer;
   display: grid; place-items: center;
   opacity: 0; transition: opacity 0.16s ease;
 }
