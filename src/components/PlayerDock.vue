@@ -307,6 +307,7 @@ function onEnded() {
   min-width: 0;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 8px;
 }
 
@@ -526,6 +527,7 @@ function onEnded() {
 .lyrics-scroll {
   height: 90%;
   overflow-y: auto;
+  overflow-x: hidden;
   text-align: center;
   color: var(--text-tertiary);
   mask-image: linear-gradient(transparent, black 16%, black 84%, transparent);
