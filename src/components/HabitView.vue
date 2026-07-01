@@ -359,6 +359,7 @@ const totalCompletions = computed(() => {
 /* 横向滚动区域 */
 .graph-scroll-area {
   flex: 1;
+  min-width: 0;
   overflow-x: auto;
   overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
