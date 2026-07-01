@@ -315,6 +315,7 @@ function onEnded() {
   position: relative;
   overflow: hidden;
   white-space: nowrap;
+  text-align: center;
   mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
   -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
 }
@@ -333,6 +334,7 @@ function onEnded() {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  text-align: center;
   font-size: 14px;
   font-weight: 700;
   color: var(--text-primary);
@@ -364,6 +366,7 @@ function onEnded() {
   display: flex;
   align-items: center;
   gap: 4px;
+  justify-content: center;
 }
 
 .mini-ctrl {
