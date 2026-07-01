@@ -354,8 +354,7 @@ const totalCompletions = computed(() => {
 /* 格子 */
 .graph-grid {
   display: grid;
-  grid-template-rows: repeat(7, 1fr);
-  grid-auto-flow: column;
+  grid-template-rows: repeat(7, auto);
   gap: 2px;
 }
 
