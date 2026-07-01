@@ -487,7 +487,7 @@ function isAdding(weekId, parentId) {
 .s-slogan { padding: 8px 0 10px; }
 .slogan-wrap {
   overflow: hidden; white-space: nowrap; border-radius: 12px; padding: 10px 0;
-  background: linear-gradient(135deg, rgba(250,35,59,0.06), rgba(250,35,59,0.03));
+  background: linear-gradient(135deg, rgba(236,65,65,0.06), rgba(236,65,65,0.03));
   mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
   -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
 }
@@ -497,7 +497,7 @@ function isAdding(weekId, parentId) {
 }
 .slogan-item {
   font-size: 14px; font-weight: 700;
-  background: linear-gradient(135deg, var(--accent), #ff7a90);
+  background: linear-gradient(135deg, var(--accent), #f06c6c);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   background-clip: text;
 }
@@ -523,7 +523,7 @@ function isAdding(weekId, parentId) {
 .s-year-btn.active { background: var(--accent); color: white; }
 .s-annual-btn {
   border: 0; border-radius: 8px; padding: 6px 13px;
-  background: rgba(250,35,59,0.08); color: var(--accent);
+  background: rgba(236,65,65,0.08); color: var(--accent);
   font-size: 13px; font-weight: 700; cursor: pointer;
   transition: background 0.15s, color 0.15s;
 }
@@ -547,7 +547,7 @@ function isAdding(weekId, parentId) {
 /* 当前周：左侧 accent 色边框 */
 .week-current {
   border-left: 3px solid var(--accent);
-  box-shadow: 0 1px 8px rgba(250,35,59,0.08);
+  box-shadow: 0 1px 8px rgba(236,65,65,0.08);
 }
 
 /* 过往周：浅灰背景，无边框 */
@@ -584,7 +584,7 @@ function isAdding(weekId, parentId) {
 }
 .week-badge-current {
   color: var(--accent);
-  background: rgba(250,35,59,0.08);
+  background: rgba(236,65,65,0.08);
   font-weight: 700;
 }
 
@@ -598,7 +598,7 @@ function isAdding(weekId, parentId) {
   font-size: 12px; font-weight: 700; cursor: pointer;
   transition: background 0.15s;
 }
-.week-report-btn:active { background: rgba(250,35,59,0.15); }
+.week-report-btn:active { background: rgba(236,65,65,0.15); }
 
 .week-toggle-btn {
   width: 28px; height: 28px; border: 0; border-radius: 999px;
@@ -657,7 +657,7 @@ function isAdding(weekId, parentId) {
 }
 .task-text.completed {
   color: var(--text-tertiary);
-  text-decoration: underline wavy rgba(250,35,59,0.45);
+  text-decoration: underline wavy rgba(236,65,65,0.45);
 }
 
 .task-sub-btn {
@@ -668,7 +668,7 @@ function isAdding(weekId, parentId) {
   display: grid; place-items: center;
   transition: background 0.15s;
 }
-.task-sub-btn:active { background: rgba(250,35,59,0.18); }
+.task-sub-btn:active { background: rgba(236,65,65,0.18); }
 
 .task-del-btn {
   width: 24px; height: 24px; flex-shrink: 0;
@@ -677,7 +677,7 @@ function isAdding(weekId, parentId) {
   display: grid; place-items: center;
   transition: background 0.15s, color 0.15s;
 }
-.task-del-btn:active { background: rgba(250,35,59,0.1); color: var(--accent); }
+.task-del-btn:active { background: rgba(236,65,65,0.1); color: var(--accent); }
 
 /* 添加根任务按钮 */
 .task-add-root {
@@ -715,7 +715,7 @@ function isAdding(weekId, parentId) {
 .report-head { display: flex; align-items: center; gap: 10px; }
 .rpt-back {
   border: 0; border-radius: 999px; padding: 5px 12px;
-  background: rgba(250,35,59,0.08); color: var(--accent);
+  background: rgba(236,65,65,0.08); color: var(--accent);
   font-size: 12px; font-weight: 700; cursor: pointer;
 }
 .report-head h2 { margin: 0; font-size: 17px; font-weight: 800; }
@@ -729,7 +729,7 @@ function isAdding(weekId, parentId) {
 }
 .rpt-bullet { font-size: 12px; flex-shrink: 0; width: 16px; text-align: center; }
 .rpt-item.done .rpt-text {
-  text-decoration: underline wavy rgba(250,35,59,0.4);
+  text-decoration: underline wavy rgba(236,65,65,0.4);
   color: var(--text-tertiary);
 }
 .rpt-text { font-size: 14px; color: var(--text-primary); word-break: break-word; }

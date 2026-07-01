@@ -453,7 +453,7 @@ const totalCompletions = computed(() => {
 }
 .habit-row:active .habit-del,
 .habit-row:hover .habit-del { opacity: 1; }
-.habit-del:active { background: rgba(250,35,59,0.1); color: var(--accent); }
+.habit-del:active { background: rgba(236,65,65,0.1); color: var(--accent); }
 
 /* ---- 空状态 ---- */
 .habit-empty {

@@ -24,7 +24,7 @@ defineProps({
 .artwork {
   overflow: hidden;
   border-radius: 12px;
-  background: linear-gradient(135deg, #fa233b, #ff7a90);
+  background: linear-gradient(135deg, #ec4141, #f06c6c);
   box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
   flex: 0 0 auto;
 }

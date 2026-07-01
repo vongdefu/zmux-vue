@@ -323,7 +323,7 @@ function backToBrowse() {
   height: 36px;
   border: 0;
   border-radius: 999px;
-  background: linear-gradient(135deg, #fa233b, #ff7a90);
+  background: linear-gradient(135deg, #ec4141, #f06c6c);
   color: white;
   font-size: 18px;
   cursor: pointer;
@@ -406,7 +406,7 @@ function backToBrowse() {
   border: 0;
   border-radius: 999px;
   padding: 8px 13px;
-  background: rgba(250, 35, 59, 0.1);
+  background: rgba(236, 65, 65, 0.1);
   color: var(--accent);
   font-size: 13px;
   font-weight: 800;
@@ -440,7 +440,7 @@ function backToBrowse() {
   aspect-ratio: 1;
   display: grid;
   place-items: center;
-  background: linear-gradient(135deg, #fa233b, #ff7a90);
+  background: linear-gradient(135deg, #ec4141, #f06c6c);
   color: white;
   font-size: 22px;
   font-weight: 800;
@@ -470,7 +470,7 @@ function backToBrowse() {
   border: 0;
   border-radius: 999px;
   padding: 7px 12px;
-  background: rgba(250, 35, 59, 0.1);
+  background: rgba(236, 65, 65, 0.1);
   color: var(--accent);
   font-size: 13px;
   font-weight: 700;
@@ -494,7 +494,7 @@ function backToBrowse() {
   border: 0;
   border-radius: 8px;
   padding: 6px 14px;
-  background: rgba(250, 35, 59, 0.08);
+  background: rgba(236, 65, 65, 0.08);
   color: var(--accent);
   font-size: 13px;
   font-weight: 700;
@@ -504,7 +504,7 @@ function backToBrowse() {
   transition: background 0.15s;
 }
 .fave-playlist-btn:active {
-  background: rgba(250, 35, 59, 0.16);
+  background: rgba(236, 65, 65, 0.16);
 }
 
 .empty-state {
@@ -519,7 +519,7 @@ function backToBrowse() {
   border: 0;
   border-radius: var(--radius-md);
   padding: 12px;
-  background: rgba(250, 35, 59, 0.08);
+  background: rgba(236, 65, 65, 0.08);
   color: var(--accent);
   font-size: var(--text-footnote);
   font-weight: 700;
@@ -528,6 +528,6 @@ function backToBrowse() {
 }
 
 .load-more-btn:active {
-  background: rgba(250, 35, 59, 0.16);
+  background: rgba(236, 65, 65, 0.16);
 }
 </style>

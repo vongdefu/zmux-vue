@@ -191,7 +191,7 @@ defineProps({
 }
 
 .plain-button {
-  background: rgba(250, 35, 59, 0.1);
+  background: rgba(236, 65, 65, 0.1);
   color: var(--accent);
 }
 </style>

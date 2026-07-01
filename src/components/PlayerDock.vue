@@ -419,7 +419,7 @@ function onEnded() {
   flex-direction: column;
   padding: 20px 22px;
   background:
-    radial-gradient(circle at 30% 0%, rgba(250, 35, 59, 0.18), transparent 34%),
+    radial-gradient(circle at 30% 0%, rgba(236, 65, 65, 0.18), transparent 34%),
     linear-gradient(180deg, #fbfbfd, #f5f5f7);
 }
 

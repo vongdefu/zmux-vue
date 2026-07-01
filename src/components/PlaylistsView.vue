@@ -216,7 +216,7 @@ function coverGradient(name) {
 .tool-row button {
   border: 0; border-radius: 8px;
   padding: 6px 14px;
-  background: rgba(250, 35, 59, 0.08);
+  background: rgba(236, 65, 65, 0.08);
   color: var(--accent);
   font-size: 13px; font-weight: 700; cursor: pointer;
 }
@@ -276,7 +276,7 @@ function coverGradient(name) {
 .back-btn {
   border: 0; border-radius: 999px; align-self: flex-start;
   padding: 6px 14px;
-  background: rgba(250,35,59,0.08);
+  background: rgba(236,65,65,0.08);
   color: var(--accent); font-size: 13px; font-weight: 700; cursor: pointer;
 }
 
@@ -292,7 +292,7 @@ function coverGradient(name) {
 }
 .del-btn {
   border: 0; border-radius: 8px; padding: 6px 14px;
-  background: rgba(250,35,59,0.08); color: var(--accent);
+  background: rgba(236,65,65,0.08); color: var(--accent);
   font-size: 13px; font-weight: 700; cursor: pointer; flex-shrink: 0;
 }
 
@@ -300,12 +300,12 @@ function coverGradient(name) {
   width: 100%; border: 0;
   border-radius: var(--radius-md);
   padding: 12px;
-  background: rgba(250, 35, 59, 0.08);
+  background: rgba(236, 65, 65, 0.08);
   color: var(--accent);
   font-size: var(--text-footnote);
   font-weight: 700; cursor: pointer;
   transition: background 0.15s;
 }
-.load-more-btn:active { background: rgba(250, 35, 59, 0.16); }
+.load-more-btn:active { background: rgba(236, 65, 65, 0.16); }
 .load-more-btn:disabled { opacity: 0.5; cursor: default; }
 </style>

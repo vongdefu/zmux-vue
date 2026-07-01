@@ -121,8 +121,8 @@ const modules = computed(() => [
     id: 'music',
     icon: '🎵',
     label: '美好音乐',
-    color: '#fa233b',
-    bg: 'linear-gradient(135deg, #fa233b, #ff7a90)',
+    color: '#ec4141',
+    bg: 'linear-gradient(135deg, #ec4141, #f06c6c)',
     summary: currentTrackTitle.value
       ? `正在播放：${currentTrackTitle.value}`
       : '搜索歌曲，发现好音乐',

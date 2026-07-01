@@ -2,7 +2,7 @@ const JOOX_TOKEN = 'f84ao9lMF_q7husBWRfgUw';
 const JOOX_BR = 4;
 
 export const sourceMeta = {
-  netease: { label: '网易云', shortLabel: '网易云', color: '#fa233b' },
+  netease: { label: '网易云', shortLabel: '网易云', color: '#ec4141' },
   qq: { label: 'QQ音乐', shortLabel: 'QQ', color: '#31c27c' },
   kuwo: { label: '酷我', shortLabel: '酷我', color: '#ffb100' },
   joox: { label: 'JOOX', shortLabel: 'JOOX', color: '#00d084' }

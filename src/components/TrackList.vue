@@ -116,7 +116,7 @@ defineEmits(["play", "favorite", "remove"])
 }
 
 .track-row.playing {
-  background: rgba(250, 35, 59, 0.09);
+  background: rgba(236, 65, 65, 0.09);
 }
 
 .track-index {
@@ -181,7 +181,7 @@ defineEmits(["play", "favorite", "remove"])
 }
 
 .favorite-action.active {
-  background: rgba(250, 35, 59, 0.12);
+  background: rgba(236, 65, 65, 0.12);
   color: var(--accent);
 }
 

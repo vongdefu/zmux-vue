@@ -379,7 +379,7 @@ onBeforeUnmount(() => {
   font-size: 17px;
 }
 .p-btn-main.pause {
-  background: rgba(250, 35, 59, 0.12);
+  background: rgba(236, 65, 65, 0.12);
   color: var(--accent);
 }
 

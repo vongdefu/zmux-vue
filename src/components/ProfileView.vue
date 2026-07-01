@@ -111,7 +111,7 @@ const historyCount = computed(() => props.store.state.playHistory.length)
   border: 0;
   border-radius: 999px;
   padding: 6px 12px;
-  background: rgba(250, 35, 59, 0.1);
+  background: rgba(236, 65, 65, 0.1);
   color: var(--accent);
   font-size: 13px;
   font-weight: 700;
@@ -164,7 +164,7 @@ const historyCount = computed(() => props.store.state.playHistory.length)
   margin-left: 4px;
   padding: 1px 6px;
   border-radius: 999px;
-  background: rgba(250, 35, 59, 0.12);
+  background: rgba(236, 65, 65, 0.12);
   font-size: 11px;
 }
 
@@ -185,7 +185,7 @@ const historyCount = computed(() => props.store.state.playHistory.length)
   border: 0;
   border-radius: 8px;
   padding: 6px 14px;
-  background: rgba(250, 35, 59, 0.08);
+  background: rgba(236, 65, 65, 0.08);
   color: var(--accent);
   font-size: 13px;
   font-weight: 700;
