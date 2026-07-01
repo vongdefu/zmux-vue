@@ -8,10 +8,64 @@ function fmtMMDD(date) {
   return `${m}/${d}`
 }
 
+function mondayOfDate(date) {
+  const d = new Date(date)
+  d.setHours(0, 0, 0, 0)
+  const day = d.getDay()
+  const offset = day === 0 ? -6 : 1 - day
+  d.setDate(d.getDate() + offset)
+  return d
+}
+
 /**
- * ISO 8601 周历。
- * 周一为每周第一天；ISO 年份由该周周四所在的日历年决定；
- * 第 1 周 = 包含 1 月 4 日的那一周。
+ * 找到某年的第一个周一。
+ * 例如 2025-01-01 是周三 → 第一个周一 = 2025-01-06
+ */
+function firstMondayOfYear(year) {
+  const jan1 = new Date(year, 0, 1)
+  const day = jan1.getDay()
+  if (day === 1) return jan1
+  const offset = day === 0 ? 1 : 8 - day
+  return new Date(year, 0, 1 + offset)
+}
+
+/**
+ * 找到某年的最后一个周一（只要周一还在本年度内）。
+ * 例如 2022-12-31 是周六 → 最后一个周一 = 2022-12-26
+ */
+function lastMondayOfYear(year) {
+  const dec31 = new Date(year, 11, 31)
+  const day = dec31.getDay()
+  const offset = day === 0 ? -6 : 1 - day
+  return new Date(year, 11, 31 + offset)
+}
+
+/**
+ * 根据周一日期和当年第一个周一，生成周信息。
+ * 周数 = 距离第一个周一的偏移 / 7 + 1
+ */
+function weekInfoForMonday(monday, firstMonday) {
+  const diffDays = Math.round((monday.getTime() - firstMonday.getTime()) / 86400000)
+  const weekNum = Math.floor(diffDays / 7) + 1
+
+  const sunday = new Date(monday)
+  sunday.setDate(monday.getDate() + 6)
+
+  const year = monday.getFullYear()
+
+  return {
+    id: `${year}-W${String(weekNum).padStart(2, '0')}`,
+    monday: monday.toISOString().slice(0, 10),
+    label: `第 ${weekNum} 周（${fmtMMDD(monday)}-${fmtMMDD(sunday)}）`,
+    start: fmtMMDD(monday),
+    end: fmtMMDD(sunday),
+    weekNum,
+  }
+}
+
+/**
+ * 兼容旧 API：根据任意日期返回 ISO 8601 周信息（保留给可能的外部调用）。
+ * 新代码请使用 firstMondayOfYear + weekInfoForMonday。
  */
 export function weekInfo(date) {
   const d = new Date(date)
@@ -21,12 +75,10 @@ export function weekInfo(date) {
   const monday = new Date(d)
   monday.setDate(d.getDate() + monOffset)
 
-  // ISO 年份 = 该周周四所在的日历年
   const thursday = new Date(monday)
   thursday.setDate(monday.getDate() + 3)
   const isoYear = thursday.getFullYear()
 
-  // 1 月 4 日所在周的周一
   const jan4 = new Date(isoYear, 0, 4)
   const jan4Day = jan4.getDay()
   const jan4Mon = new Date(jan4)
@@ -38,11 +90,9 @@ export function weekInfo(date) {
   const sunday = new Date(monday)
   sunday.setDate(monday.getDate() + 6)
 
-  const mondayStr = monday.toISOString().slice(0, 10)
-
   return {
     id: `${isoYear}-W${String(weekNum).padStart(2, '0')}`,
-    monday: mondayStr,          // 唯一键，用于去重
+    monday: monday.toISOString().slice(0, 10),
     label: `第 ${weekNum} 周（${fmtMMDD(monday)}-${fmtMMDD(sunday)}）`,
     start: fmtMMDD(monday),
     end: fmtMMDD(sunday),
@@ -76,34 +126,48 @@ export function saveSchedule(schedule) {
 /* ========== 周管理 ========== */
 
 /**
- * 补全某个年份从 1 月 1 日到年末（或今天）的所有周。
- * - 已有周保留数据、修正锁定状态
- * - 缺失周追加
- * - 按 monday 字段去重
+ * 补全某个年份从第一个周一到年末（或今天）的所有周。
+ *
+ * 规则：
+ * - 第 1 周 = 当年第一个周一所在的那一周
+ * - 只要周一落在本年度，就算本年的周（允许跨年）
+ * - 过去年份：生成全部周并锁定
+ * - 当前年份：只生成到本周，本周不锁定
+ * - 已有周保留数据并修正锁定状态
  */
 export function initYearSchedule(schedule, year) {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
   const currentYear = today.getFullYear()
 
-  const endDate = year < currentYear
-    ? new Date(year, 11, 31)
-    : today
+  const firstMonday = firstMondayOfYear(year)
+  let lastMonday = lastMondayOfYear(year)
+
+  // 当前年份：只生成到本周
+  if (year === currentYear) {
+    const todayMonday = mondayOfDate(today)
+    // 如果今天还没到今年的第一个周一，则不生成任何周
+    if (todayMonday < firstMonday) {
+      if (!schedule[year]) schedule[year] = { weeks: [] }
+      return schedule[year]
+    }
+    if (todayMonday < lastMonday) lastMonday = todayMonday
+  }
 
   if (!schedule[year]) schedule[year] = { weeks: [] }
   const yearData = schedule[year]
-  const thisMonday = weekInfo(today).monday
 
-  const cursor = new Date(year, 0, 1)
+  const todayMondayStr = mondayOfDate(today).toISOString().slice(0, 10)
   const seen = new Set(yearData.weeks.map(w => w.monday))
 
-  while (cursor <= endDate) {
-    const info = weekInfo(cursor)
+  const cursor = new Date(firstMonday)
+  while (cursor <= lastMonday) {
+    const info = weekInfoForMonday(new Date(cursor), firstMonday)
 
     if (!seen.has(info.monday)) {
       seen.add(info.monday)
-      // 过去年份 → 全部锁定；今年 → 本周及未来不锁定
-      const isPast = year < currentYear || info.monday < thisMonday
+      // 过去年份全部锁定；今年本周之前的周锁定，本周不锁定
+      const isPast = year < currentYear || info.monday < todayMondayStr
       yearData.weeks.push({
         id: info.id,
         monday: info.monday,
@@ -118,11 +182,14 @@ export function initYearSchedule(schedule, year) {
       // 修正已有周的锁定状态
       const existing = yearData.weeks.find(w => w.monday === info.monday)
       if (existing) {
-        existing.locked = year < currentYear || info.monday < thisMonday
+        existing.locked = year < currentYear || info.monday < todayMondayStr
       }
     }
     cursor.setDate(cursor.getDate() + 7)
   }
+
+  // 按周一日期倒序排列（最近的在前）
+  yearData.weeks.sort((a, b) => b.monday.localeCompare(a.monday))
 
   return yearData
 }
@@ -134,7 +201,13 @@ export function ensureCurrentWeek(schedule, year) {
 
   const today = new Date()
   today.setHours(0, 0, 0, 0)
-  const info = weekInfo(today)
+  const firstMonday = firstMondayOfYear(year)
+  const todayMonday = mondayOfDate(today)
+
+  // 如果今天还没到今年的第一个周一，当前周属于上一年
+  if (todayMonday < firstMonday) return yearData
+
+  const info = weekInfoForMonday(todayMonday, firstMonday)
 
   const existing = yearData.weeks.find(w => w.monday === info.monday)
   if (existing) {
@@ -142,12 +215,10 @@ export function ensureCurrentWeek(schedule, year) {
     return yearData
   }
 
-  // 上一周
-  const prevMon = new Date(today)
-  const day = today.getDay()
-  const offset = day === 0 ? -6 : 1 - day
-  prevMon.setDate(today.getDate() + offset - 7)
-  const prevInfo = weekInfo(prevMon)
+  // 上一周（锁定并迁移未完成任务）
+  const prevMonday = new Date(todayMonday)
+  prevMonday.setDate(prevMonday.getDate() - 7)
+  const prevInfo = weekInfoForMonday(prevMonday, firstMonday)
   const prevWeek = yearData.weeks.find(w => w.monday === prevInfo.monday)
 
   const newWeek = {
@@ -168,6 +239,7 @@ export function ensureCurrentWeek(schedule, year) {
   }
 
   yearData.weeks.push(newWeek)
+  yearData.weeks.sort((a, b) => b.monday.localeCompare(a.monday))
   return yearData
 }
 

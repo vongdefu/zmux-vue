@@ -69,9 +69,11 @@ const reportUndone = computed(() =>
   reportWeek.value ? collectByStatus(reportWeek.value.tasks, false) : []
 )
 
-// 初始化
+// 初始化：补全最近 5 年的所有周数据
 onMounted(() => {
-  initYearSchedule(schedule.value, selectedYear.value)
+  for (const y of years.value) {
+    initYearSchedule(schedule.value, y)
+  }
   saveSchedule(schedule.value)
 })
 
@@ -295,7 +297,7 @@ function reportItemTree(tasks, depth = 0) {
               <div class="week-label" @click="toggleWeek(week.id)">
                 <span class="week-arrow">{{ expandedWeeks[week.id] ? '▼' : '▶' }}</span>
                 <span class="week-name">{{ week.label }}</span>
-                <span v-if="week.locked" class="week-lock">🔒</span>
+                <span v-if="week.locked" class="week-lock" title="过往周，仅可查看">🕐</span>
               </div>
               <div class="week-actions">
                 <button class="week-report-btn" @click="openReport(week.id)">周报</button>
@@ -309,7 +311,7 @@ function reportItemTree(tasks, depth = 0) {
 
             <div v-if="expandedWeeks[week.id]" class="week-body">
               <!-- 任务树 -->
-              <div v-if="week.tasks.length || addParentId.value === null" class="task-tree">
+              <div v-if="week.tasks.length || (!week.locked && addParentId.value === null)" class="task-tree">
                 <div
                   v-for="item in flatTree(week.tasks)" :key="item.id"
                   class="task-node"
@@ -356,7 +358,7 @@ function reportItemTree(tasks, depth = 0) {
                 </div>
 
                 <!-- 根任务的内联输入框 -->
-                <div v-if="addParentId === null" class="task-add-inline root">
+                <div v-if="!week.locked && addParentId === null" class="task-add-inline root">
                   <input
                     ref="addInputRef"
                     v-model="addText"
@@ -368,9 +370,9 @@ function reportItemTree(tasks, depth = 0) {
                 </div>
               </div>
 
-              <div v-if="!week.tasks.length && addParentId !== null" class="task-empty">
+              <div v-if="!week.tasks.length && (week.locked || addParentId !== null)" class="task-empty">
                 <span>📋</span>
-                <p v-if="week.locked">本周无任务记录</p>
+                <p v-if="week.locked">过往周，无任务记录</p>
                 <p v-else>暂无任务</p>
               </div>
 
@@ -452,7 +454,8 @@ function reportItemTree(tasks, depth = 0) {
 
 /* ---- 周卡片 ---- */
 .week-card { border-radius: 14px; background: white; overflow: hidden; }
-.week-card.locked { opacity: 0.65; }
+.week-card.locked { background: rgba(118,118,128,0.03); }
+.week-card.locked .week-name { color: var(--text-secondary); }
 .week-header {
   display: flex; justify-content: space-between; align-items: center;
   padding: 12px 14px;
@@ -460,7 +463,7 @@ function reportItemTree(tasks, depth = 0) {
 .week-label { display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; min-width: 0; }
 .week-arrow { font-size: 10px; color: var(--text-tertiary); flex-shrink: 0; width: 12px; text-align: center; }
 .week-name { font-size: 14px; font-weight: 700; color: var(--text-primary); }
-.week-lock { font-size: 12px; }
+.week-lock { font-size: 11px; opacity: 0.7; }
 .week-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
 .week-report-btn {
   border: 0; border-radius: 6px; padding: 4px 10px;
