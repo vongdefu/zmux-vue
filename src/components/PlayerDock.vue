@@ -9,6 +9,10 @@ const props = defineProps({
     type: Object,
     required: true,
   },
+  tabBarVisible: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const audioRef = ref(null)
@@ -16,6 +20,10 @@ const activeLineRef = ref(null)
 const lyricsRef = ref(null)
 const songLabelRef = ref(null)
 const needsScroll = ref(false)
+
+const miniBottom = computed(() =>
+  props.tabBarVisible ? '90px' : '10px',
+)
 
 const state = props.store.state
 const progress = computed(() =>
@@ -150,6 +158,7 @@ function onEnded() {
   <div
     v-if="state.currentTrack && !state.playerOpen"
     class="mini-player"
+    :style="{ bottom: miniBottom }"
   >
     <div
       class="mini-cover"

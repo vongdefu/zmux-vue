@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import HomeView from './components/HomeView.vue'
 import MusicView from './components/MusicView.vue'
 import ProfileView from './components/ProfileView.vue'
@@ -7,10 +7,14 @@ import ScheduleView from './components/ScheduleView.vue'
 import HabitView from './components/HabitView.vue'
 import PomodoroView from './components/PomodoroView.vue'
 import PlayerDock from './components/PlayerDock.vue'
+import TabBar from './components/TabBar.vue'
 import { usePlayerStore } from './stores/playerStore'
 
 const store = usePlayerStore()
 const currentView = ref('home')
+const tabBarVisible = computed(() =>
+  ['music','schedule','pomodoro','habit'].includes(currentView.value)
+)
 </script>
 
 <template>
@@ -26,7 +30,13 @@ const currentView = ref('home')
         <PomodoroView v-if="currentView === 'pomodoro'" @back="currentView = 'home'" />
         <ProfileView  v-if="currentView === 'profile'"  :store="store" @back="currentView = 'music'" />
 
-        <PlayerDock :store="store" />
+        <PlayerDock :store="store" :tabBarVisible="tabBarVisible" />
+
+        <TabBar
+          v-if="['music','schedule','pomodoro','habit'].includes(currentView)"
+          :currentView="currentView"
+          @navigate="(v) => currentView = v"
+        />
 
         <Transition name="toast">
           <div v-if="store.state.toast" class="toast">
