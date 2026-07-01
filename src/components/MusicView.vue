@@ -15,6 +15,7 @@ const emit = defineEmits(["navigate"])
 const showSearch = ref(false)
 const searchFocused = ref(false)
 const selectedPlaylistId = ref(null)
+const loadingTracks = ref(false)
 
 const selectedPlaylist = computed(
   () =>
@@ -51,9 +52,11 @@ function doSearch() {
   props.store.search(true)
 }
 
-function onPlaylistClick(id) {
-  props.store.selectRecommendedPlaylist(id)
+async function onPlaylistClick(id) {
   selectedPlaylistId.value = id
+  loadingTracks.value = true
+  await props.store.selectRecommendedPlaylist(id)
+  loadingTracks.value = false
 }
 
 function backToBrowse() {
@@ -199,7 +202,7 @@ function backToBrowse() {
           >收藏歌单</button>
         </div>
 
-        <div v-if="store.state.recommendedLoading" class="empty-state">
+        <div v-if="loadingTracks" class="empty-state">
           正在加载歌曲…
         </div>
         <TrackList
