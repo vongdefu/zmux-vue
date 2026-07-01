@@ -10,14 +10,17 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['navigate'])
+const emit = defineEmits(["navigate"])
 
 const showSearch = ref(false)
 const searchFocused = ref(false)
 const selectedPlaylistId = ref(null)
 
-const selectedPlaylist = computed(() =>
-  props.store.state.recommendedPlaylists.find(p => p.id === selectedPlaylistId.value) || null
+const selectedPlaylist = computed(
+  () =>
+    props.store.state.recommendedPlaylists.find(
+      (p) => p.id === selectedPlaylistId.value,
+    ) || null,
 )
 
 onMounted(() => {
@@ -62,7 +65,11 @@ function backToBrowse() {
   <div class="music-view">
     <!-- 顶栏：搜索框 + 人像 -->
     <header class="music-top-bar">
-      <button class="music-home-btn" @click="emit('navigate', 'home')" title="主页">
+      <button
+        class="music-home-btn"
+        @click="emit('navigate', 'home')"
+        title="主页"
+      >
         ←
       </button>
       <form class="music-search-box" @submit.prevent="doSearch">
@@ -79,15 +86,20 @@ function backToBrowse() {
           type="button"
           class="music-search-clear"
           @mousedown.prevent="store.state.searchKeyword = ''; showSearch = false"
-        >×</button>
+        >
+          ×
+        </button>
       </form>
-      <button class="music-avatar" @click="emit('navigate', 'profile')" title="我的">
+      <button
+        class="music-avatar"
+        @click="emit('navigate', 'profile')"
+        title="我的"
+      >
         👤
       </button>
     </header>
 
     <div class="music-content">
-
       <!-- ========== 搜索界面 ========== -->
       <template v-if="showSearch">
         <div class="source-grid">
@@ -96,7 +108,10 @@ function backToBrowse() {
             :key="source"
             class="source-toggle"
           >
-            <input v-model="store.state.enabledSources[source]" type="checkbox" />
+            <input
+              v-model="store.state.enabledSources[source]"
+              type="checkbox"
+            />
             <span :style="{ background: meta.color }" />
             {{ meta.shortLabel }}
           </label>
@@ -134,12 +149,22 @@ function backToBrowse() {
             <h2>推荐歌单</h2>
             <p v-if="store.state.recommendedLoading">加载中...</p>
           </div>
-          <button class="plain-button" :disabled="store.state.recommendedLoading" @click="store.refreshRecommendedPlaylists()">
+          <button
+            class="plain-button"
+            :disabled="store.state.recommendedLoading"
+            @click="store.refreshRecommendedPlaylists()"
+          >
             换一换
           </button>
         </div>
 
-        <div v-if="store.state.recommendedLoading && !store.state.recommendedPlaylists.length" class="empty-state">
+        <div
+          v-if="
+            store.state.recommendedLoading &&
+            !store.state.recommendedPlaylists.length
+          "
+          class="empty-state"
+        >
           正在发现好歌单...
         </div>
 
@@ -151,7 +176,11 @@ function backToBrowse() {
             @click="onPlaylistClick(playlist.id)"
           >
             <div class="recommend-card-cover">
-              <img v-if="playlist.cover" :src="playlist.cover" :alt="playlist.name" />
+              <img
+                v-if="playlist.cover"
+                :src="playlist.cover"
+                :alt="playlist.name"
+              />
               <span v-else>{{ playlist.name.slice(0, 2) }}</span>
             </div>
             <strong>{{ playlist.name }}</strong>
@@ -161,10 +190,8 @@ function backToBrowse() {
 
       <!-- ========== 推荐歌单：详情 ========== -->
       <template v-else>
-        <button class="back-button" @click="backToBrowse">
-          ← 推荐歌单
-        </button>
-        <h2 class="playlist-detail-name">{{ selectedPlaylist?.name || '' }}</h2>
+        <button class="back-button" @click="backToBrowse">← 推荐歌单</button>
+        <h2 class="playlist-detail-name">{{ selectedPlaylist?.name || "" }}</h2>
 
         <TrackList
           :tracks="selectedPlaylist?.tracks || []"
@@ -172,11 +199,13 @@ function backToBrowse() {
           :is-favorite="store.isFavorite"
           empty-text="歌单暂无歌曲"
           :removable="false"
-          @play="(_, index) => store.playFromList('recommended', index, selectedPlaylistId)"
+          @play="
+            (_, index) =>
+              store.playFromList('recommended', index, selectedPlaylistId)
+          "
           @favorite="store.toggleFavorite"
         />
       </template>
-
     </div>
   </div>
 </template>
@@ -207,7 +236,7 @@ function backToBrowse() {
   height: 40px;
   padding: 0 4px 0 12px;
   border-radius: 14px;
-  background: rgba(118, 118, 128, 0.10);
+  background: rgba(118, 118, 128, 0.1);
 }
 
 .music-search-icon {
@@ -392,6 +421,7 @@ function backToBrowse() {
 .recommend-card strong {
   display: -webkit-box;
   -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   margin: 8px 10px 10px;
