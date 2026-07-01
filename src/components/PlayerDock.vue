@@ -277,13 +277,12 @@ function onEnded() {
   right: 16px;
   bottom: 10px;
   z-index: 20;
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 12px;
+  display: flex;
   align-items: center;
+  gap: 12px;
   border: 1px solid rgba(255, 255, 255, 0.7);
   border-radius: 18px;
-  padding: 10px;
+  padding: 8px 10px;
   background: rgba(255, 255, 255, 0.86);
   backdrop-filter: blur(22px);
   color: var(--text-primary);
@@ -304,11 +303,12 @@ function onEnded() {
 }
 
 .mini-info {
+  flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 8px;
+  gap: 5px;
 }
 
 .mini-song-row {
@@ -367,15 +367,15 @@ function onEnded() {
 }
 
 .mini-ctrl {
-  width: 34px;
-  height: 34px;
+  width: 30px;
+  height: 30px;
   border: 0;
   border-radius: 999px;
   display: grid;
   place-items: center;
   background: transparent;
   color: var(--text-secondary);
-  font-size: 16px;
+  font-size: 15px;
   cursor: pointer;
   transition: background 0.16s ease, color 0.16s ease;
 }
@@ -389,9 +389,9 @@ function onEnded() {
 }
 
 .mini-controls-row :deep(.icon-button) {
-  width: 38px;
-  height: 38px;
-  font-size: 16px;
+  width: 34px;
+  height: 34px;
+  font-size: 14px;
 }
 
 .player-sheet {
