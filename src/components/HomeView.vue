@@ -7,7 +7,7 @@ const store = usePlayerStore()
 const blocks = [
   { id: 'music', icon: '🎵', label: '美好音乐', active: true },
   { id: 'schedule', icon: '📅', label: '日程管理', active: true },
-  { id: 'pomodoro', icon: '🍅', label: '番茄时钟', active: false },
+  { id: 'pomodoro', icon: '🍅', label: '番茄时钟', active: true },
   { id: 'habit', icon: '✅', label: '习惯跟踪', active: true },
 ]
 
