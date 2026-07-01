@@ -293,7 +293,7 @@ onBeforeUnmount(() => {
 .pomodoro-view {
   width: 100%; height: 100%;
   display: flex; flex-direction: column;
-  background: var(--screen);
+  background: var(--bg-canvas);
 }
 
 /* 顶栏 */

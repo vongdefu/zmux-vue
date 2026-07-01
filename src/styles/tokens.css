@@ -1,0 +1,79 @@
+/* ===== Design Tokens ===== */
+/* iOS-inspired visual language for zmux */
+
+:root {
+  /* ---- Accent ---- */
+  --accent: #007AFF;
+  --accent-dim: rgba(0, 122, 255, 0.12);
+
+  /* ---- Radii (layered) ---- */
+  --radius-sm: 10px;   /* small controls / tags */
+  --radius-md: 16px;   /* cards */
+  --radius-lg: 22px;   /* large cards / sheets */
+  --radius-full: 999px; /* pill buttons */
+
+  /* ---- Spacing (5 stops) ---- */
+  --space-xs: 6px;
+  --space-sm: 10px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+
+  /* ---- Type scale ---- */
+  --text-large-title: 32px;
+  --text-title: 22px;
+  --text-headline: 17px;
+  --text-body: 15px;
+  --text-footnote: 13px;
+  --text-caption: 11px;
+
+  /* ---- Surfaces (light) ---- */
+  --bg-canvas: #F2F2F7;   /* system grey, never pure white */
+  --bg-card: #FFFFFF;
+
+  /* ---- Text ---- */
+  --text-primary: #1d1d1f;
+  --text-secondary: #6e6e73;
+  --text-tertiary: #8e8e93;
+
+  /* ---- Separator ---- */
+  --separator: rgba(60, 60, 67, 0.12);
+
+  /* ---- Glass ---- */
+  --glass-bg-light: rgba(255, 255, 255, 0.65);
+  --glass-border-light: rgba(255, 255, 255, 0.8);
+}
+
+/* ---- Dark mode ---- */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-canvas: #000000;
+    --bg-card: #1C1C1E;
+    --text-primary: #f5f5f7;
+    --text-secondary: #98989d;
+    --text-tertiary: #6e6e73;
+    --separator: rgba(84, 84, 88, 0.45);
+    --glass-bg-light: rgba(28, 28, 30, 0.65);
+    --glass-border-light: rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* ---- Glass utility ---- */
+.glass {
+  background: var(--glass-bg-light);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 0.5px solid var(--glass-border-light);
+}
+
+/* Fallback for browsers without backdrop-filter support */
+@supports not (backdrop-filter: blur(1px)) {
+  .glass {
+    background: rgba(255, 255, 255, 0.9);
+  }
+  @media (prefers-color-scheme: dark) {
+    .glass {
+      background: rgba(28, 28, 30, 0.9);
+    }
+  }
+}

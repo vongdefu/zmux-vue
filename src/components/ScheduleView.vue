@@ -461,7 +461,7 @@ function isAdding(weekId, parentId) {
 .schedule-view {
   width: 100%; height: 100%;
   display: flex; flex-direction: column;
-  background: var(--screen);
+  background: var(--bg-canvas);
 }
 
 .s-top-bar {
