@@ -1,4 +1,4 @@
-const SCHEDULE_KEY = 'zmux-schedule-v3'
+const SCHEDULE_KEY = 'zmux-schedule-v4'
 
 /* ========== 工具函数 ========== */
 
@@ -8,6 +8,15 @@ function fmtMMDD(date) {
   return `${m}/${d}`
 }
 
+/** 本地日期字符串 YYYY-MM-DD（使用本地时区，避免 UTC 跨日问题） */
+function localDateStr(date) {
+  const y = date.getFullYear()
+  const m = String(date.getMonth() + 1).padStart(2, '0')
+  const d = String(date.getDate()).padStart(2, '0')
+  return `${y}-${m}-${d}`
+}
+
+/** 获取给定日期所在周的周一（本地时间） */
 function mondayOfDate(date) {
   const d = new Date(date)
   d.setHours(0, 0, 0, 0)
@@ -30,7 +39,7 @@ function firstMondayOfYear(year) {
 }
 
 /**
- * 找到某年的最后一个周一（只要周一还在本年度内）。
+ * 找到某年的最后一个周一（周一还在本年度内）。
  * 例如 2022-12-31 是周六 → 最后一个周一 = 2022-12-26
  */
 function lastMondayOfYear(year) {
@@ -43,6 +52,7 @@ function lastMondayOfYear(year) {
 /**
  * 根据周一日期和当年第一个周一，生成周信息。
  * 周数 = 距离第一个周一的偏移 / 7 + 1
+ * monday 字段使用本地日期字符串，保证排序和比较正确。
  */
 function weekInfoForMonday(monday, firstMonday) {
   const diffDays = Math.round((monday.getTime() - firstMonday.getTime()) / 86400000)
@@ -55,48 +65,10 @@ function weekInfoForMonday(monday, firstMonday) {
 
   return {
     id: `${year}-W${String(weekNum).padStart(2, '0')}`,
-    monday: monday.toISOString().slice(0, 10),
+    monday: localDateStr(monday),
     label: `第 ${weekNum} 周（${fmtMMDD(monday)}-${fmtMMDD(sunday)}）`,
     start: fmtMMDD(monday),
     end: fmtMMDD(sunday),
-    weekNum,
-  }
-}
-
-/**
- * 兼容旧 API：根据任意日期返回 ISO 8601 周信息（保留给可能的外部调用）。
- * 新代码请使用 firstMondayOfYear + weekInfoForMonday。
- */
-export function weekInfo(date) {
-  const d = new Date(date)
-  d.setHours(0, 0, 0, 0)
-  const day = d.getDay()
-  const monOffset = day === 0 ? -6 : 1 - day
-  const monday = new Date(d)
-  monday.setDate(d.getDate() + monOffset)
-
-  const thursday = new Date(monday)
-  thursday.setDate(monday.getDate() + 3)
-  const isoYear = thursday.getFullYear()
-
-  const jan4 = new Date(isoYear, 0, 4)
-  const jan4Day = jan4.getDay()
-  const jan4Mon = new Date(jan4)
-  jan4Mon.setDate(jan4.getDate() + (jan4Day === 0 ? -6 : 1 - jan4Day))
-
-  const diffDays = Math.round((monday.getTime() - jan4Mon.getTime()) / 86400000)
-  const weekNum = Math.floor(diffDays / 7) + 1
-
-  const sunday = new Date(monday)
-  sunday.setDate(monday.getDate() + 6)
-
-  return {
-    id: `${isoYear}-W${String(weekNum).padStart(2, '0')}`,
-    monday: monday.toISOString().slice(0, 10),
-    label: `第 ${weekNum} 周（${fmtMMDD(monday)}-${fmtMMDD(sunday)}）`,
-    start: fmtMMDD(monday),
-    end: fmtMMDD(sunday),
-    sunday: sunday.toISOString().slice(0, 10),
     weekNum,
   }
 }
@@ -105,13 +77,13 @@ function uid() {
   return `${Date.now()}-${Math.random().toString(16).slice(2, 8)}`
 }
 
-/** 返回今天所在周的周一日期字符串，用于组件识别当前周 */
-export function getTodayMondayStr() {
-  return mondayOfDate(new Date()).toISOString().slice(0, 10)
-}
-
 export function createTask(text) {
   return { id: uid(), text: text.trim(), completed: false, children: [] }
+}
+
+/** 返回今天所在周的周一日期字符串（本地时区），供组件识别当前周 */
+export function getTodayMondayStr() {
+  return localDateStr(mondayOfDate(new Date()))
 }
 
 /* ========== 持久化 ========== */
@@ -135,10 +107,11 @@ export function saveSchedule(schedule) {
  *
  * 规则：
  * - 第 1 周 = 当年第一个周一所在的那一周
- * - 只要周一落在本年度，就算本年的周（允许跨年）
+ * - 周一落在哪个年份就算哪个年份的周（允许跨年）
  * - 过去年份：生成全部周并锁定
  * - 当前年份：只生成到本周，本周不锁定
  * - 已有周保留数据并修正锁定状态
+ * - 清除所有不属于本年的脏数据
  */
 export function initYearSchedule(schedule, year) {
   const today = new Date()
@@ -151,9 +124,9 @@ export function initYearSchedule(schedule, year) {
   // 当前年份：只生成到本周
   if (year === currentYear) {
     const todayMonday = mondayOfDate(today)
-    // 如果今天还没到今年的第一个周一，则不生成任何周
     if (todayMonday < firstMonday) {
       if (!schedule[year]) schedule[year] = { weeks: [] }
+      schedule[year].weeks = []
       return schedule[year]
     }
     if (todayMonday < lastMonday) lastMonday = todayMonday
@@ -162,18 +135,32 @@ export function initYearSchedule(schedule, year) {
   if (!schedule[year]) schedule[year] = { weeks: [] }
   const yearData = schedule[year]
 
-  const todayMondayStr = mondayOfDate(today).toISOString().slice(0, 10)
-  const seen = new Set(yearData.weeks.map(w => w.monday))
+  const todayMondayStr = localDateStr(mondayOfDate(today))
+  const existingMap = new Map()
+  for (const w of yearData.weeks) {
+    existingMap.set(w.monday, w)
+  }
+
+  // 收集所有合法 monday
+  const validMondays = new Set()
+  const newWeeks = []
 
   const cursor = new Date(firstMonday)
   while (cursor <= lastMonday) {
     const info = weekInfoForMonday(new Date(cursor), firstMonday)
+    validMondays.add(info.monday)
 
-    if (!seen.has(info.monday)) {
-      seen.add(info.monday)
-      // 过去年份全部锁定；今年本周之前的周锁定，本周不锁定
+    const existing = existingMap.get(info.monday)
+    if (existing) {
+      // 保留已有数据，修正锁定状态
+      existing.locked = year < currentYear || info.monday < todayMondayStr
+      existing.label = info.label
+      existing.start = info.start
+      existing.end = info.end
+      newWeeks.push(existing)
+    } else {
       const isPast = year < currentYear || info.monday < todayMondayStr
-      yearData.weeks.push({
+      newWeeks.push({
         id: info.id,
         monday: info.monday,
         label: info.label,
@@ -183,24 +170,31 @@ export function initYearSchedule(schedule, year) {
         tasks: [],
         report: { summary: '' },
       })
-    } else {
-      // 修正已有周的锁定状态
-      const existing = yearData.weeks.find(w => w.monday === info.monday)
-      if (existing) {
-        existing.locked = year < currentYear || info.monday < todayMondayStr
-      }
     }
     cursor.setDate(cursor.getDate() + 7)
   }
 
   // 按周一日期倒序排列（最近的在前）
-  yearData.weeks.sort((a, b) => b.monday.localeCompare(a.monday))
+  newWeeks.sort((a, b) => b.monday.localeCompare(a.monday))
+  yearData.weeks = newWeeks
 
   return yearData
 }
 
-/** 确保当前周存在（周一自动生成新周 + 迁移未完成任务） */
+/**
+ * 确保当前周存在。
+ * 仅在当前年份调用时才会创建新周并迁移未完成任务；
+ * 对过往年份直接返回已有数据。
+ */
 export function ensureCurrentWeek(schedule, year) {
+  const currentYear = new Date().getFullYear()
+
+  // 过往年份：不做任何操作
+  if (year !== currentYear) {
+    if (!schedule[year]) return initYearSchedule(schedule, year)
+    return schedule[year]
+  }
+
   const yearData = schedule[year]
   if (!yearData) return initYearSchedule(schedule, year)
 
@@ -209,7 +203,6 @@ export function ensureCurrentWeek(schedule, year) {
   const firstMonday = firstMondayOfYear(year)
   const todayMonday = mondayOfDate(today)
 
-  // 如果今天还没到今年的第一个周一，当前周属于上一年
   if (todayMonday < firstMonday) return yearData
 
   const info = weekInfoForMonday(todayMonday, firstMonday)
