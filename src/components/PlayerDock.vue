@@ -289,6 +289,7 @@ function onEnded() {
   display: flex;
   align-items: center;
   gap: 12px;
+  transition: bottom 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
   border: 1px solid rgba(255, 255, 255, 0.7);
   border-radius: 18px;
   padding: 8px 10px;

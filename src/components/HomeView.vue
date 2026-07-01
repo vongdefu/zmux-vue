@@ -24,11 +24,11 @@ const todayDateStr = computed(() => {
 })
 
 /* ===== 今日概览数据 ===== */
+// 数据在每次挂载时从 localStorage 刷新（App.vue 中 v-if 切换会重新创建组件）
 const currentTrackTitle = computed(() =>
   store.state.currentTrack?.title || null,
 )
 
-// TODO: 接入真实数据 - 从 pomodoroStorage 读取今日番茄数
 const todayPomodoros = ref(0)
 function refreshPomodoros() {
   const data = loadPomodoro()
@@ -39,7 +39,6 @@ function refreshPomodoros() {
   }
 }
 
-// TODO: 接入真实数据 - 从 scheduleStorage 读取本周未完成日程数
 const incompleteTasks = ref(0)
 function countIncomplete(tasks) {
   let count = 0
@@ -59,7 +58,6 @@ function refreshSchedule() {
   incompleteTasks.value = week ? countIncomplete(week.tasks || []) : 0
 }
 
-// TODO: 接入真实数据 - 计算习惯连续打卡天数
 const habitStreak = ref(0)
 function calcStreak() {
   const habits = loadHabits()
