@@ -14,13 +14,11 @@ const store = usePlayerStore()
 const habits = ref(loadHabits())
 const newName = ref('')
 const graphScrollRef = ref(null)
-const graphScrollClipRef = ref(null)
 const selectedDate = ref(dateKey(new Date()))
-const scrollLeft = ref(0)
 
 const DAY_LABELS = ['一', '二', '三', '四', '五', '六', '日']
-const CELL_SIZE = 18   // 16px cell + 2px gap
 
+// 找到贡献图的起始日期（最早打卡日 or 去年 1 月 1 日对齐周一，取更早的）
 function computeStartDate() {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
@@ -53,7 +51,7 @@ const totalWeeks = computed(() => {
   return Math.max(Math.ceil((diffDays + 1) / 7), 12)
 })
 
-// --------------- 贡献图全量数据（计算量小，全部算出） ---------------
+// --------------- 贡献图数据 ---------------
 const graphData = computed(() => {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
@@ -92,64 +90,9 @@ const graphData = computed(() => {
     d2.setDate(d2.getDate() + 7)
   }
 
-  const diffFromStart = Math.floor((today.getTime() - startDate.getTime()) / (24 * 3600 * 1000))
-  const todayCol = Math.floor(diffFromStart / 7)
-
-  return { rows, monthLabels, weeks, todayCol }
+  return { rows, monthLabels, weeks }
 })
 
-// --------------- 虚拟滚动：只渲染可视列 ---------------
-const BUFFER_COLS = 10
-
-const visibleRange = computed(() => {
-  const clipWidth = graphScrollClipRef.value?.clientWidth || 300
-  const start = Math.max(0, Math.floor(scrollLeft.value / CELL_SIZE) - BUFFER_COLS)
-  const visibleCount = Math.ceil(clipWidth / CELL_SIZE)
-  const end = Math.min(totalWeeks.value, start + visibleCount + BUFFER_COLS * 2)
-  return { start, end }
-})
-
-const visibleWeeks = computed(() => visibleRange.value.end - visibleRange.value.start)
-
-const visibleMonthLabels = computed(() => {
-  const { start, end } = visibleRange.value
-  return graphData.value.monthLabels
-    .filter(ml => ml.col >= start && ml.col < end)
-    .map(ml => ({ ...ml, col: ml.col - start }))
-})
-
-const visibleCells = computed(() => {
-  const { start, end } = visibleRange.value
-  const cells = []
-  for (const row of graphData.value.rows) {
-    for (let col = start; col < end; col++) {
-      cells.push(row[col])
-    }
-  }
-  return cells
-})
-
-function onScroll() {
-  if (graphScrollRef.value) {
-    scrollLeft.value = graphScrollRef.value.scrollLeft
-  }
-}
-
-// 滚动到今天所在列
-function scrollToToday() {
-  if (!graphScrollRef.value || !graphScrollClipRef.value) return
-  const clipWidth = graphScrollClipRef.value.clientWidth
-  const todayEnd = (graphData.value.todayCol + 1) * CELL_SIZE
-  graphScrollRef.value.scrollLeft = Math.max(0, todayEnd - clipWidth + CELL_SIZE)
-  scrollLeft.value = graphScrollRef.value.scrollLeft
-}
-
-onMounted(async () => {
-  await nextTick()
-  scrollToToday()
-})
-
-// --------------- 习惯操作 ---------------
 const selectedDayHabits = computed(() =>
   habits.value.filter((h) => h.completions[selectedDate.value])
 )
@@ -158,9 +101,15 @@ function selectDate(dateKeyStr) {
   selectedDate.value = selectedDate.value === dateKeyStr ? '' : dateKeyStr
 }
 
-function persist() {
-  saveHabits(habits.value)
-}
+onMounted(async () => {
+  await nextTick()
+  if (graphScrollRef.value) {
+    graphScrollRef.value.scrollLeft = graphScrollRef.value.scrollWidth
+  }
+})
+
+// --------------- 习惯操作 ---------------
+function persist() { saveHabits(habits.value) }
 
 function addHabit() {
   const name = newName.value.trim()
@@ -196,9 +145,7 @@ function removeHabit(habit) {
 
 const totalCompletions = computed(() => {
   let count = 0
-  for (const h of habits.value) {
-    count += Object.keys(h.completions).length
-  }
+  for (const h of habits.value) count += Object.keys(h.completions).length
   return count
 })
 </script>
@@ -219,63 +166,39 @@ const totalCompletions = computed(() => {
           <span class="graph-total">{{ totalCompletions }} 次打卡</span>
         </div>
 
-        <div class="graph-main">
-          <!-- 星期标签（固定，不滚动） -->
+        <div class="graph-layout">
+          <!-- 星期标签（固定左侧，不滚动） -->
           <div class="graph-day-labels">
             <span v-for="(label, i) in DAY_LABELS" :key="i">{{ label }}</span>
           </div>
 
-          <!-- 虚拟滚动区域 -->
-          <div class="graph-scroll-clip" ref="graphScrollClipRef">
-            <div class="graph-scroll-area" ref="graphScrollRef" @scroll="onScroll">
-              <div class="graph-scroll-inner">
-                <!-- 占位撑开完整滚动宽度 + 高度（月份 + 7行格子） -->
+          <!-- 滚动区（月份 + 格子） -->
+          <div class="graph-scroll-area" ref="graphScrollRef">
+            <div class="graph-scroll-inner">
+              <!-- 月份标签 -->
+              <div class="graph-months" :style="{ gridTemplateColumns: `repeat(${graphData.weeks}, 1fr)` }">
+                <span
+                  v-for="ml in graphData.monthLabels"
+                  :key="ml.col"
+                  :style="{ gridColumn: ml.col + 1 }"
+                >{{ ml.label }}</span>
+              </div>
+
+              <!-- 格子 -->
+              <div
+                class="graph-grid"
+              >
                 <div
-                  class="graph-scroll-spacer"
-                  :style="{
-                    width: `${graphData.weeks * CELL_SIZE}px`,
-                    height: '140px',
-                  }"
+                  v-for="(cell, ci) in graphData.rows.flat()"
+                  :key="ci"
+                  class="graph-cell"
+                  :class="[
+                    `level-${Math.min(cell.count, 4)}`,
+                    { future: cell.isFuture, selected: cell.date === selectedDate }
+                  ]"
+                  :title="cell.isFuture ? cell.date : `${cell.date}: ${cell.count} 项`"
+                  @click="!cell.isFuture && selectDate(cell.date)"
                 />
-
-                <!-- 仅渲染可视列 -->
-                <div
-                  class="graph-visible"
-                  :style="{ left: `${visibleRange.start * CELL_SIZE}px` }"
-                >
-                  <!-- 月份标签 -->
-                  <div
-                    class="graph-months-row"
-                    :style="{ gridTemplateColumns: `repeat(${visibleWeeks}, 1fr)` }"
-                  >
-                    <span
-                      v-for="ml in visibleMonthLabels"
-                      :key="ml.col"
-                      :style="{ gridColumn: ml.col + 1 }"
-                    >{{ ml.label }}</span>
-                  </div>
-
-                  <!-- 格子 -->
-                  <div
-                    class="graph-grid"
-                    :style="{
-                      gridTemplateColumns: `repeat(${visibleWeeks}, 1fr)`,
-                      gridTemplateRows: 'repeat(7, 1fr)',
-                    }"
-                  >
-                    <div
-                      v-for="(cell, ci) in visibleCells"
-                      :key="ci"
-                      class="graph-cell"
-                      :class="[
-                        `level-${Math.min(cell.count, 4)}`,
-                        { future: cell.isFuture, selected: cell.date === selectedDate }
-                      ]"
-                      :title="cell.isFuture ? cell.date : `${cell.date}: ${cell.count} 项`"
-                      @click="!cell.isFuture && selectDate(cell.date)"
-                    />
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -320,11 +243,7 @@ const totalCompletions = computed(() => {
 
       <!-- ====== 习惯列表 ====== -->
       <div v-if="habits.length" class="habit-list">
-        <div
-          v-for="habit in habits"
-          :key="habit.id"
-          class="habit-row"
-        >
+        <div v-for="habit in habits" :key="habit.id" class="habit-row">
           <button
             class="habit-dot"
             :style="{
@@ -354,12 +273,12 @@ const totalCompletions = computed(() => {
 </template>
 
 <style scoped>
+/* ===== 整体 ===== */
 .habit-view {
   width: 100%; height: 100%;
   display: flex; flex-direction: column;
 }
 
-/* ---- 顶栏 ---- */
 .habit-top-bar {
   flex-shrink: 0;
   display: flex; align-items: center; gap: 14px;
@@ -375,14 +294,13 @@ const totalCompletions = computed(() => {
 }
 .habit-top-bar h1 { margin: 0; font-size: 22px; font-weight: 800; }
 
-/* ---- 内容区 ---- */
 .habit-content {
   flex: 1; overflow-y: auto;
-  padding: 0 18px 120px;
+  padding: 6px 18px 120px;
   display: flex; flex-direction: column; gap: 12px;
 }
 
-/* ---- 贡献图卡片 ---- */
+/* ===== 贡献图卡片 ===== */
 .graph-card {
   border-radius: 18px;
   padding: 14px;
@@ -395,62 +313,52 @@ const totalCompletions = computed(() => {
 .graph-header h2 { margin: 0; font-size: 16px; }
 .graph-total { color: var(--text-secondary); font-size: 12px; font-weight: 600; }
 
-/* 图主体：标签 + 滚动区 */
-.graph-main {
+/* -- 布局：固定标签 + 滚动区 -- */
+.graph-layout {
   display: flex;
 }
 
-/* 星期标签（固定，不滚动） */
+/* 星期标签（固定） */
 .graph-day-labels {
   display: grid; grid-template-rows: repeat(7, 1fr); gap: 2px;
-  font-size: 10px; color: var(--text-tertiary); font-weight: 600;
-  flex-shrink: 0; padding-top: 15px;
+  flex-shrink: 0;
+  padding-top: 15px;  /* 与格子行对齐 */
   margin-right: 4px;
 }
 .graph-day-labels span {
-  height: 16px; display: flex; align-items: center; justify-content: center;
-  width: 16px;
-}
-
-/* 滚动裁剪层 */
-.graph-scroll-clip {
-  flex: 1; min-width: 0;
-  overflow: hidden;
+  width: 16px; height: 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; color: var(--text-tertiary); font-weight: 600;
 }
 
 /* 滚动区 */
 .graph-scroll-area {
-  width: 100%;
+  flex: 1; min-width: 0;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
 .graph-scroll-area::-webkit-scrollbar { height: 0; }
 
 .graph-scroll-inner {
-  position: relative;
-  padding-bottom: 2px;
+  display: flex; flex-direction: column; gap: 2px;
+  width: max-content;
 }
 
-/* 占位撑开完整滚动宽度 */
-.graph-scroll-spacer {
-  height: 1px;
-}
-
-/* 可视区域：绝对定位 */
-.graph-visible {
-  position: absolute;
-  top: 0; left: 0;
-}
-
-/* 月份行 */
-.graph-months-row {
+/* 月份标签 */
+.graph-months {
   display: grid;
-  gap: 2px;
   font-size: 10px; color: var(--text-tertiary); font-weight: 600;
   margin-bottom: 2px;
 }
 
 /* 格子 */
+.graph-grid {
+  display: grid;
+  grid-template-rows: repeat(7, 1fr);
+  grid-auto-flow: column;
+  gap: 2px;
+}
+
 .graph-cell {
   width: 16px; height: 16px;
   border-radius: 3px;
@@ -461,7 +369,6 @@ const totalCompletions = computed(() => {
 .graph-cell.level-2 { background: #7bc96f; }
 .graph-cell.level-3 { background: #239a3b; }
 .graph-cell.level-4 { background: #196127; }
-
 .graph-cell.future { opacity: 0; pointer-events: none; }
 .graph-cell.selected {
   outline: 2px solid var(--accent);
@@ -477,7 +384,7 @@ const totalCompletions = computed(() => {
 }
 .graph-legend .graph-cell { width: 12px; height: 12px; flex-shrink: 0; }
 
-/* ---- 添加表单 ---- */
+/* ===== 添加表单 ===== */
 .add-habit-form {
   display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 8px;
   padding: 6px; border-radius: 16px; background: white;
@@ -495,7 +402,7 @@ const totalCompletions = computed(() => {
 }
 .add-habit-form button:disabled { opacity: 0.4; }
 
-/* ---- 习惯列表 ---- */
+/* ===== 习惯列表 ===== */
 .habit-list { display: flex; flex-direction: column; }
 .habit-row {
   display: grid; grid-template-columns: auto minmax(0,1fr) auto auto;
@@ -531,7 +438,7 @@ const totalCompletions = computed(() => {
 .habit-row:hover .habit-del { opacity: 1; }
 .habit-del:active { background: rgba(250,35,59,0.1); color: var(--accent); }
 
-/* ---- 空状态 ---- */
+/* ===== 空状态 ===== */
 .habit-empty {
   flex: 1; display: flex; flex-direction: column;
   align-items: center; justify-content: center; gap: 10px;
@@ -540,7 +447,7 @@ const totalCompletions = computed(() => {
 .habit-empty-icon { font-size: 40px; }
 .habit-empty p { margin: 0; font-size: 15px; }
 
-/* ---- 日期详情 ---- */
+/* ===== 日期详情 ===== */
 .graph-detail {
   margin-top: 10px;
   padding-top: 10px;
