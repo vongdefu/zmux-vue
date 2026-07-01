@@ -323,7 +323,9 @@ const totalCompletions = computed(() => {
 /* ---- 内容 ---- */
 .habit-content {
   flex: 1;
+  min-width: 0;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 6px 18px 120px;
   display: flex; flex-direction: column; gap: 12px;
 }
@@ -367,7 +369,7 @@ const totalCompletions = computed(() => {
 .graph-scroll-area::-webkit-scrollbar { height: 0; }
 .graph-scroll-inner {
   display: flex; flex-direction: column; gap: 2px;
-  min-width: max-content;
+  width: max-content;
 }
 
 /* 月份标签 */
