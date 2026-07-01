@@ -105,6 +105,11 @@ function uid() {
   return `${Date.now()}-${Math.random().toString(16).slice(2, 8)}`
 }
 
+/** 返回今天所在周的周一日期字符串，用于组件识别当前周 */
+export function getTodayMondayStr() {
+  return mondayOfDate(new Date()).toISOString().slice(0, 10)
+}
+
 export function createTask(text) {
   return { id: uid(), text: text.trim(), completed: false, children: [] }
 }
