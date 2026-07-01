@@ -358,13 +358,11 @@ const totalCompletions = computed(() => {
   width: 16px;
 }
 
-/* 滚动区：标签 + 格子放一起，但格子可滚 */
+/* 滚动区：格子可横向滚动 */
 .graph-scroll-area {
   flex: 1; min-width: 0;
   overflow-x: auto; overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
-  /* 关键：限制滚动区本身不超出父容器 */
-  contain: strict;
 }
 .graph-scroll-area::-webkit-scrollbar { height: 0; }
 
