@@ -3,7 +3,7 @@ const HABIT_STORAGE_KEY = 'zmux-habits-v1'
 export const HABIT_COLORS = [
   '#fa233b',
   '#31c27c',
-  '#007aff',
+  '#fa233b',
   '#ff9f0a',
   '#af52de',
   '#ff375f',

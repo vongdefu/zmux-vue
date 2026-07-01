@@ -2,9 +2,9 @@
 /* iOS-inspired visual language for zmux */
 
 :root {
-  /* ---- Accent ---- */
-  --accent: #007AFF;
-  --accent-dim: rgba(0, 122, 255, 0.12);
+  /* ---- Accent (Apple Music red) ---- */
+  --accent: #fa233b;
+  --accent-dim: rgba(250, 35, 59, 0.12);
 
   /* ---- Radii (layered) ---- */
   --radius-sm: 10px;   /* small controls / tags */

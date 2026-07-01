@@ -131,8 +131,8 @@ const modules = computed(() => [
     id: 'schedule',
     icon: '📅',
     label: '日程管理',
-    color: '#007AFF',
-    bg: 'linear-gradient(135deg, #007AFF, #5ac8fa)',
+    color: '#ff9f0a',
+    bg: 'linear-gradient(135deg, #ff9f0a, #ffcc00)',
     summary: incompleteTasks.value
       ? `${incompleteTasks.value} 项日程待完成`
       : '本周暂无待办',
@@ -213,7 +213,7 @@ const modules = computed(() => [
   height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 24px 18px 120px;
+  padding: 24px 18px 100px;
   overflow-y: auto;
 }
 
@@ -308,7 +308,7 @@ const modules = computed(() => [
   display: flex;
   flex-direction: column;
   border-radius: var(--radius-md);
-  overflow: hidden;
+  overflow: scroll;
   background: var(--bg-card);
 }
 

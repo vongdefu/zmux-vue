@@ -487,7 +487,7 @@ function isAdding(weekId, parentId) {
 .s-slogan { padding: 8px 0 10px; }
 .slogan-wrap {
   overflow: hidden; white-space: nowrap; border-radius: 12px; padding: 10px 0;
-  background: linear-gradient(135deg, rgba(250,35,59,0.06), rgba(0,122,255,0.06));
+  background: linear-gradient(135deg, rgba(250,35,59,0.06), rgba(250,35,59,0.03));
   mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
   -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 90%, transparent 100%);
 }
@@ -497,7 +497,7 @@ function isAdding(weekId, parentId) {
 }
 .slogan-item {
   font-size: 14px; font-weight: 700;
-  background: linear-gradient(135deg, var(--accent), #007aff);
+  background: linear-gradient(135deg, var(--accent), #ff7a90);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   background-clip: text;
 }
@@ -594,11 +594,11 @@ function isAdding(weekId, parentId) {
 }
 .week-report-btn {
   border: 0; border-radius: 6px; padding: 5px 12px;
-  background: rgba(0,122,255,0.08); color: #007aff;
+  background: var(--accent-dim); color: var(--accent);
   font-size: 12px; font-weight: 700; cursor: pointer;
   transition: background 0.15s;
 }
-.week-report-btn:active { background: rgba(0,122,255,0.15); }
+.week-report-btn:active { background: rgba(250,35,59,0.15); }
 
 .week-toggle-btn {
   width: 28px; height: 28px; border: 0; border-radius: 999px;
@@ -663,12 +663,12 @@ function isAdding(weekId, parentId) {
 .task-sub-btn {
   width: 24px; height: 24px; flex-shrink: 0;
   border: 0; border-radius: 6px;
-  background: rgba(0,122,255,0.08); color: #007aff;
+  background: var(--accent-dim); color: var(--accent);
   font-size: 15px; font-weight: 700; cursor: pointer;
   display: grid; place-items: center;
   transition: background 0.15s;
 }
-.task-sub-btn:active { background: rgba(0,122,255,0.18); }
+.task-sub-btn:active { background: rgba(250,35,59,0.18); }
 
 .task-del-btn {
   width: 24px; height: 24px; flex-shrink: 0;
