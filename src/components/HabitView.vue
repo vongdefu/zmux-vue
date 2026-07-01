@@ -229,10 +229,13 @@ const totalCompletions = computed(() => {
           <div class="graph-scroll-clip" ref="graphScrollClipRef">
             <div class="graph-scroll-area" ref="graphScrollRef" @scroll="onScroll">
               <div class="graph-scroll-inner">
-                <!-- 占位撑开完整滚动宽度 -->
+                <!-- 占位撑开完整滚动宽度 + 高度（月份 + 7行格子） -->
                 <div
                   class="graph-scroll-spacer"
-                  :style="{ width: `${graphData.weeks * CELL_SIZE}px` }"
+                  :style="{
+                    width: `${graphData.weeks * CELL_SIZE}px`,
+                    height: '140px',
+                  }"
                 />
 
                 <!-- 仅渲染可视列 -->
@@ -418,7 +421,7 @@ const totalCompletions = computed(() => {
 /* 滚动区 */
 .graph-scroll-area {
   width: 100%;
-  overflow-x: auto; overflow-y: hidden;
+  overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
 .graph-scroll-area::-webkit-scrollbar { height: 0; }
