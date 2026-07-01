@@ -47,6 +47,9 @@ const tabs = [
   border-radius: var(--radius-lg);
   padding: 6px 8px;
   padding-bottom: max(8px, env(safe-area-inset-bottom));
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   border-top: 0.5px solid var(--separator);
 }
 
