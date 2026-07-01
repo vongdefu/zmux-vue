@@ -189,11 +189,12 @@ const totalCompletions = computed(() => {
           </div>
 
           <!-- 月份 + 格子（可横向滚动） -->
-          <div class="graph-scroll-area" ref="graphScrollRef">
-            <div
-              class="graph-scroll-inner"
-              :style="{ width: `${graphData.weeks * 18}px` }"
-            >
+          <div class="graph-scroll-clip">
+            <div class="graph-scroll-area" ref="graphScrollRef">
+              <div
+                class="graph-scroll-inner"
+                :style="{ width: `${graphData.weeks * 18}px` }"
+              >
               <!-- 月份标签 -->
               <div
                 class="graph-months"
@@ -224,6 +225,7 @@ const totalCompletions = computed(() => {
                 />
               </div>
             </div>
+          </div>
           </div>
         </div>
 
@@ -358,9 +360,15 @@ const totalCompletions = computed(() => {
   width: 16px;
 }
 
-/* 滚动区：格子可横向滚动 */
-.graph-scroll-area {
+/* 滚动裁剪层：切断内部宽度向外传播 */
+.graph-scroll-clip {
   flex: 1; min-width: 0;
+  overflow: hidden;
+}
+
+/* 滚动区 */
+.graph-scroll-area {
+  width: 100%;
   overflow-x: auto; overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
 }
