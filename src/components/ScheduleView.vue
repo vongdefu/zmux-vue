@@ -249,6 +249,7 @@ function isAdding(weekId, parentId) {
             <span class="slogan-item">看五年，想三年，踏踏实实干一年</span>
             <span class="slogan-gap">✦</span>
             <span class="slogan-item">看五年，想三年，踏踏实实干一年</span>
+            <span class="slogan-gap">✦</span>
           </span>
         </div>
       </div>
@@ -345,15 +346,18 @@ function isAdding(weekId, parentId) {
           >
             <!-- 周头部 -->
             <div class="week-header" @click="toggleWeek(week.id)">
-              <div class="week-label">
-                <span class="week-arrow">{{ expandedWeeks[week.id] ? '▼' : '▶' }}</span>
-                <span class="week-name">{{ week.label }}</span>
-                <span v-if="week.locked" class="week-badge">🕐</span>
-                <span v-else-if="week.monday === todayMonday" class="week-badge week-badge-current">本周</span>
-              </div>
+              <span class="week-arrow">{{ expandedWeeks[week.id] ? '▼' : '▶' }}</span>
+              <span class="week-name">{{ week.label }}</span>
+              <span v-if="week.locked" class="week-badge">🕐</span>
+              <span v-else-if="week.monday === todayMonday" class="week-badge week-badge-current">本周</span>
+              <span v-else class="week-badge-placeholder" />
               <div class="week-actions" @click.stop>
                 <button class="week-report-btn" @click="openReport(week.id)">周报</button>
-                <button class="week-toggle-btn" :class="{ open: expandedWeeks[week.id] }">
+                <button
+                  class="week-toggle-btn"
+                  :class="{ open: expandedWeeks[week.id] }"
+                  @click.stop="toggleWeek(week.id)"
+                >
                   {{ expandedWeeks[week.id] ? '−' : '+' }}
                 </button>
               </div>
@@ -553,23 +557,20 @@ function isAdding(weekId, parentId) {
 .week-past .week-name { color: var(--text-secondary); }
 
 .week-header {
-  display: flex; justify-content: space-between; align-items: center;
+  display: flex; align-items: center; gap: 8px;
   padding: 14px 16px;
   cursor: pointer; user-select: none;
   min-height: 52px; box-sizing: border-box;
 }
 .week-header:hover { background: rgba(118,118,128,0.02); }
 
-.week-label {
-  display: flex; align-items: center; gap: 8px;
-  min-width: 0; flex: 1;
-}
 .week-arrow {
   font-size: 10px; color: var(--text-tertiary);
   flex-shrink: 0; width: 12px; text-align: center;
   transition: transform 0.2s;
 }
 .week-name {
+  flex: 1; min-width: 0;
   font-size: 14px; font-weight: 700; color: var(--text-primary);
 }
 .week-badge {
@@ -577,6 +578,9 @@ function isAdding(weekId, parentId) {
   background: rgba(118,118,128,0.08);
   padding: 2px 6px; border-radius: 6px;
   flex-shrink: 0;
+}
+.week-badge-placeholder {
+  width: 32px; flex-shrink: 0;
 }
 .week-badge-current {
   color: var(--accent);
