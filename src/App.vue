@@ -18,32 +18,26 @@ const tabBarVisible = computed(() =>
 </script>
 
 <template>
-  <main class="desktop-stage">
-    <section class="phone-shell">
-      <div class="dynamic-island" />
+  <div class="app-screen">
+    <HomeView     v-if="currentView === 'home'"     @navigate="(v) => currentView = v" />
+    <MusicView    v-if="currentView === 'music'"    :store="store" @navigate="(v) => currentView = v" />
+    <ScheduleView v-if="currentView === 'schedule'" @back="currentView = 'home'" />
+    <HabitView     v-if="currentView === 'habit'"    @back="currentView = 'home'" />
+    <PomodoroView v-if="currentView === 'pomodoro'" @back="currentView = 'home'" />
+    <ProfileView  v-if="currentView === 'profile'"  :store="store" @back="currentView = 'music'" />
 
-      <div class="app-screen">
-        <HomeView     v-if="currentView === 'home'"     @navigate="(v) => currentView = v" />
-        <MusicView    v-if="currentView === 'music'"    :store="store" @navigate="(v) => currentView = v" />
-        <ScheduleView v-if="currentView === 'schedule'" @back="currentView = 'home'" />
-        <HabitView     v-if="currentView === 'habit'"    @back="currentView = 'home'" />
-        <PomodoroView v-if="currentView === 'pomodoro'" @back="currentView = 'home'" />
-        <ProfileView  v-if="currentView === 'profile'"  :store="store" @back="currentView = 'music'" />
+    <PlayerDock :store="store" :tabBarVisible="tabBarVisible" />
 
-        <PlayerDock :store="store" :tabBarVisible="tabBarVisible" />
+    <TabBar
+      v-if="['music','schedule','pomodoro','habit'].includes(currentView)"
+      :currentView="currentView"
+      @navigate="(v) => currentView = v"
+    />
 
-        <TabBar
-          v-if="['music','schedule','pomodoro','habit'].includes(currentView)"
-          :currentView="currentView"
-          @navigate="(v) => currentView = v"
-        />
-
-        <Transition name="toast">
-          <div v-if="store.state.toast" class="toast">
-            {{ store.state.toast }}
-          </div>
-        </Transition>
+    <Transition name="toast">
+      <div v-if="store.state.toast" class="toast">
+        {{ store.state.toast }}
       </div>
-    </section>
-  </main>
+    </Transition>
+  </div>
 </template>
