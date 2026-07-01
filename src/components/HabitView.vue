@@ -16,36 +16,52 @@ const newName = ref('')
 const graphScrollRef = ref(null)
 const selectedDate = ref(dateKey(new Date()))
 
-// 从今年 1 月 1 日到今天，计算需要多少周
+// 找到贡献图的起始日期（最早打卡日 or 去年 1 月 1 日对齐周一，取更早的）
 const DAY_LABELS = ['一', '二', '三', '四', '五', '六', '日']
 
-function weeksFromYearStart() {
+function computeStartDate() {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
-  // 今年第一天
-  const jan1 = new Date(today.getFullYear(), 0, 1)
-  // 对齐到周一
-  const jan1Day = jan1.getDay()
-  const startDate = new Date(jan1)
+
+  // 默认起点：去年 1 月 1 日对齐到周一
+  const lastYearJan1 = new Date(today.getFullYear() - 1, 0, 1)
+  const jan1Day = lastYearJan1.getDay()
   const offset = jan1Day === 0 ? -6 : 1 - jan1Day
-  startDate.setDate(startDate.getDate() + offset)
-  // 计算从 startDate 到 today 的周数 + 1
-  const diffDays = Math.floor((today.getTime() - startDate.getTime()) / (24 * 3600 * 1000))
-  return Math.max(Math.ceil((diffDays + 1) / 7), 12)
+  const defaultStart = new Date(lastYearJan1)
+  defaultStart.setDate(defaultStart.getDate() + offset)
+
+  // 查找最早打卡日期
+  let earliest = today
+  for (const h of habits.value) {
+    for (const d of Object.keys(h.completions)) {
+      const dd = new Date(d)
+      if (dd < earliest) earliest = dd
+    }
+  }
+  // 对齐到周一
+  const earliestDay = earliest.getDay()
+  const earliestOffset = earliestDay === 0 ? -6 : 1 - earliestDay
+  earliest.setDate(earliest.getDate() + earliestOffset)
+
+  // 取更早的那个，且至少保留默认起点
+  return earliest < defaultStart ? earliest : defaultStart
 }
 
-const totalWeeks = ref(weeksFromYearStart())
+const totalWeeks = computed(() => {
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  const start = computeStartDate()
+  const diffDays = Math.floor((today.getTime() - start.getTime()) / (24 * 3600 * 1000))
+  return Math.max(Math.ceil((diffDays + 1) / 7), 12)
+})
 
 // --------------- 贡献图数据 ---------------
 const graphData = computed(() => {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
 
-  const jan1 = new Date(today.getFullYear(), 0, 1)
-  const jan1Day = jan1.getDay()
-  const mondayOffset = jan1Day === 0 ? -6 : 1 - jan1Day
-  const startDate = new Date(jan1)
-  startDate.setDate(startDate.getDate() + mondayOffset)
+  const startDate = computeStartDate()
+  const weeks = totalWeeks.value
 
   // 聚合
   const countMap = {}
@@ -55,7 +71,6 @@ const graphData = computed(() => {
     }
   }
 
-  const weeks = totalWeeks.value
   const rows = []
   for (let row = 0; row < 7; row++) {
     const cells = []
