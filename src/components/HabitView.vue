@@ -16,49 +16,38 @@ const newName = ref('')
 const graphScrollRef = ref(null)
 const selectedDate = ref(dateKey(new Date()))
 
+// 从今年 1 月 1 日到今天，计算需要多少周
 const DAY_LABELS = ['一', '二', '三', '四', '五', '六', '日']
 
-// 找到贡献图的起始日期（最早打卡日 or 去年 1 月 1 日对齐周一，取更早的）
-function computeStartDate() {
+function weeksFromYearStart() {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
-
-  const lastYearJan1 = new Date(today.getFullYear() - 1, 0, 1)
-  const jan1Day = lastYearJan1.getDay()
+  // 今年第一天
+  const jan1 = new Date(today.getFullYear(), 0, 1)
+  // 对齐到周一
+  const jan1Day = jan1.getDay()
+  const startDate = new Date(jan1)
   const offset = jan1Day === 0 ? -6 : 1 - jan1Day
-  const defaultStart = new Date(lastYearJan1)
-  defaultStart.setDate(defaultStart.getDate() + offset)
-
-  let earliest = today
-  for (const h of habits.value) {
-    for (const d of Object.keys(h.completions)) {
-      const dd = new Date(d)
-      if (dd < earliest) earliest = dd
-    }
-  }
-  const earliestDay = earliest.getDay()
-  const earliestOffset = earliestDay === 0 ? -6 : 1 - earliestDay
-  earliest.setDate(earliest.getDate() + earliestOffset)
-
-  return earliest < defaultStart ? earliest : defaultStart
+  startDate.setDate(startDate.getDate() + offset)
+  // 计算从 startDate 到 today 的周数 + 1
+  const diffDays = Math.floor((today.getTime() - startDate.getTime()) / (24 * 3600 * 1000))
+  return Math.max(Math.ceil((diffDays + 1) / 7), 12)
 }
 
-const totalWeeks = computed(() => {
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-  const start = computeStartDate()
-  const diffDays = Math.floor((today.getTime() - start.getTime()) / (24 * 3600 * 1000))
-  return Math.max(Math.ceil((diffDays + 1) / 7), 12)
-})
+const totalWeeks = ref(weeksFromYearStart())
 
 // --------------- 贡献图数据 ---------------
 const graphData = computed(() => {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
 
-  const startDate = computeStartDate()
-  const weeks = totalWeeks.value
+  const jan1 = new Date(today.getFullYear(), 0, 1)
+  const jan1Day = jan1.getDay()
+  const mondayOffset = jan1Day === 0 ? -6 : 1 - jan1Day
+  const startDate = new Date(jan1)
+  startDate.setDate(startDate.getDate() + mondayOffset)
 
+  // 聚合
   const countMap = {}
   for (const h of habits.value) {
     for (const d of Object.keys(h.completions)) {
@@ -66,6 +55,7 @@ const graphData = computed(() => {
     }
   }
 
+  const weeks = totalWeeks.value
   const rows = []
   for (let row = 0; row < 7; row++) {
     const cells = []
@@ -79,6 +69,7 @@ const graphData = computed(() => {
     rows.push(cells)
   }
 
+  // 月份标签
   const monthLabels = []
   const d2 = new Date(startDate)
   for (let col = 0; col < weeks; col++) {
@@ -90,7 +81,11 @@ const graphData = computed(() => {
     d2.setDate(d2.getDate() + 7)
   }
 
-  return { rows, monthLabels, weeks }
+  // 从 startDate 到 today 跨越了多少周 → 高亮「今天」所在的列
+  const diffFromStart = Math.floor((today.getTime() - startDate.getTime()) / (24 * 3600 * 1000))
+  const todayCol = Math.floor(diffFromStart / 7)
+
+  return { rows, monthLabels, weeks, todayCol }
 })
 
 const selectedDayHabits = computed(() =>
@@ -109,7 +104,9 @@ onMounted(async () => {
 })
 
 // --------------- 习惯操作 ---------------
-function persist() { saveHabits(habits.value) }
+function persist() {
+  saveHabits(habits.value)
+}
 
 function addHabit() {
   const name = newName.value.trim()
@@ -123,6 +120,7 @@ function toggleToday(habit) {
   const key = dateKey(new Date())
   const idx = habits.value.findIndex((h) => h.id === habit.id)
   if (idx < 0) return
+  // 深拷贝 completions 确保 Vue 检测到变化
   const updated = { ...habits.value[idx], completions: { ...habits.value[idx].completions } }
   if (updated.completions[key]) {
     delete updated.completions[key]
@@ -145,13 +143,16 @@ function removeHabit(habit) {
 
 const totalCompletions = computed(() => {
   let count = 0
-  for (const h of habits.value) count += Object.keys(h.completions).length
+  for (const h of habits.value) {
+    count += Object.keys(h.completions).length
+  }
   return count
 })
 </script>
 
 <template>
   <div class="habit-view">
+    <!-- 顶栏 -->
     <header class="habit-top-bar">
       <button class="habit-back" @click="emit('back')">←</button>
       <h1>习惯跟踪</h1>
@@ -166,13 +167,13 @@ const totalCompletions = computed(() => {
           <span class="graph-total">{{ totalCompletions }} 次打卡</span>
         </div>
 
-        <div class="graph-layout">
-          <!-- 星期标签（固定左侧，不滚动） -->
+        <div class="graph-main">
+          <!-- 星期标签（固定，不滚动） -->
           <div class="graph-day-labels">
             <span v-for="(label, i) in DAY_LABELS" :key="i">{{ label }}</span>
           </div>
 
-          <!-- 滚动区（月份 + 格子） -->
+          <!-- 月份 + 格子（可横向滚动） -->
           <div class="graph-scroll-area" ref="graphScrollRef">
             <div class="graph-scroll-inner">
               <!-- 月份标签 -->
@@ -187,6 +188,7 @@ const totalCompletions = computed(() => {
               <!-- 格子 -->
               <div
                 class="graph-grid"
+                :style="{ gridTemplateColumns: `repeat(${graphData.weeks}, 1fr)` }"
               >
                 <div
                   v-for="(cell, ci) in graphData.rows.flat()"
@@ -243,7 +245,11 @@ const totalCompletions = computed(() => {
 
       <!-- ====== 习惯列表 ====== -->
       <div v-if="habits.length" class="habit-list">
-        <div v-for="habit in habits" :key="habit.id" class="habit-row">
+        <div
+          v-for="habit in habits"
+          :key="habit.id"
+          class="habit-row"
+        >
           <button
             class="habit-dot"
             :style="{
@@ -273,15 +279,19 @@ const totalCompletions = computed(() => {
 </template>
 
 <style scoped>
-/* ===== 整体 ===== */
 .habit-view {
-  width: 100%; height: 100%;
-  display: flex; flex-direction: column;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
+/* ---- 顶栏 ---- */
 .habit-top-bar {
   flex-shrink: 0;
-  display: flex; align-items: center; gap: 14px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
   padding: 14px 18px 10px;
 }
 .habit-back {
@@ -290,17 +300,20 @@ const totalCompletions = computed(() => {
   background: rgba(118,118,128,0.1);
   color: var(--text-secondary);
   font-size: 16px; cursor: pointer;
+  flex-shrink: 0;
   display: grid; place-items: center;
 }
 .habit-top-bar h1 { margin: 0; font-size: 22px; font-weight: 800; }
 
+/* ---- 内容 ---- */
 .habit-content {
-  flex: 1; overflow-y: auto;
+  flex: 1;
+  overflow-y: auto;
   padding: 6px 18px 120px;
   display: flex; flex-direction: column; gap: 12px;
 }
 
-/* ===== 贡献图卡片 ===== */
+/* ---- 贡献图卡片 ---- */
 .graph-card {
   border-radius: 18px;
   padding: 14px;
@@ -313,35 +326,32 @@ const totalCompletions = computed(() => {
 .graph-header h2 { margin: 0; font-size: 16px; }
 .graph-total { color: var(--text-secondary); font-size: 12px; font-weight: 600; }
 
-/* -- 布局：固定标签 + 滚动区 -- */
-.graph-layout {
+/* 图主体：固定标签 + 滚动区 */
+.graph-main {
   display: flex;
 }
-
-/* 星期标签（固定） */
 .graph-day-labels {
   display: grid; grid-template-rows: repeat(7, 1fr); gap: 2px;
-  flex-shrink: 0;
-  padding-top: 15px;  /* 与格子行对齐 */
+  font-size: 10px; color: var(--text-tertiary); font-weight: 600;
+  flex-shrink: 0; padding-top: 15px;  /* 与格子对齐（月份行高度） */
   margin-right: 4px;
 }
 .graph-day-labels span {
-  width: 16px; height: 16px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 10px; color: var(--text-tertiary); font-weight: 600;
+  height: 16px; display: flex; align-items: center; justify-content: center;
+  width: 16px;
 }
 
-/* 滚动区 */
+/* 横向滚动区域 */
 .graph-scroll-area {
-  flex: 1; min-width: 0;
+  flex: 1;
   overflow-x: auto;
+  overflow-y: hidden;
   -webkit-overflow-scrolling: touch;
 }
 .graph-scroll-area::-webkit-scrollbar { height: 0; }
-
 .graph-scroll-inner {
   display: flex; flex-direction: column; gap: 2px;
-  width: max-content;
+  min-width: max-content;
 }
 
 /* 月份标签 */
@@ -354,10 +364,11 @@ const totalCompletions = computed(() => {
 /* 格子 */
 .graph-grid {
   display: grid;
-  grid-template-rows: repeat(7, auto);
+  grid-template-rows: repeat(7, 1fr);
   gap: 2px;
 }
 
+/* 格子 */
 .graph-cell {
   width: 16px; height: 16px;
   border-radius: 3px;
@@ -368,7 +379,12 @@ const totalCompletions = computed(() => {
 .graph-cell.level-2 { background: #7bc96f; }
 .graph-cell.level-3 { background: #239a3b; }
 .graph-cell.level-4 { background: #196127; }
-.graph-cell.future { opacity: 0; pointer-events: none; }
+
+.graph-cell.future {
+  opacity: 0;
+  pointer-events: none;
+}
+
 .graph-cell.selected {
   outline: 2px solid var(--accent);
   outline-offset: 1px;
@@ -383,7 +399,7 @@ const totalCompletions = computed(() => {
 }
 .graph-legend .graph-cell { width: 12px; height: 12px; flex-shrink: 0; }
 
-/* ===== 添加表单 ===== */
+/* ---- 添加表单 ---- */
 .add-habit-form {
   display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 8px;
   padding: 6px; border-radius: 16px; background: white;
@@ -401,20 +417,22 @@ const totalCompletions = computed(() => {
 }
 .add-habit-form button:disabled { opacity: 0.4; }
 
-/* ===== 习惯列表 ===== */
+/* ---- 习惯列表 ---- */
 .habit-list { display: flex; flex-direction: column; }
 .habit-row {
   display: grid; grid-template-columns: auto minmax(0,1fr) auto auto;
   gap: 10px; align-items: center;
   min-height: 48px; padding: 8px 6px;
   border-radius: 14px;
+  transition: background 0.16s ease;
 }
 .habit-dot {
   width: 26px; height: 26px;
   border: 2px solid; border-radius: 999px;
-  background: transparent; cursor: pointer;
+  background: transparent; cursor: pointer; flex-shrink: 0;
   display: grid; place-items: center;
   font-size: 12px; color: white;
+  transition: all 0.16s ease;
 }
 .habit-name {
   min-width: 0; font-size: 15px; font-weight: 600;
@@ -422,14 +440,14 @@ const totalCompletions = computed(() => {
   overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
 }
 .habit-streak {
-  font-size: 12px; font-weight: 700;
+  font-size: 12px; font-weight: 700; flex-shrink: 0;
   min-width: 32px; text-align: right;
 }
 .habit-del {
   width: 28px; height: 28px;
   border: 0; border-radius: 999px;
   background: transparent; color: var(--text-tertiary);
-  font-size: 18px; cursor: pointer;
+  font-size: 18px; cursor: pointer; flex-shrink: 0;
   display: grid; place-items: center;
   opacity: 0; transition: opacity 0.16s ease;
 }
@@ -437,7 +455,7 @@ const totalCompletions = computed(() => {
 .habit-row:hover .habit-del { opacity: 1; }
 .habit-del:active { background: rgba(250,35,59,0.1); color: var(--accent); }
 
-/* ===== 空状态 ===== */
+/* ---- 空状态 ---- */
 .habit-empty {
   flex: 1; display: flex; flex-direction: column;
   align-items: center; justify-content: center; gap: 10px;
@@ -446,7 +464,7 @@ const totalCompletions = computed(() => {
 .habit-empty-icon { font-size: 40px; }
 .habit-empty p { margin: 0; font-size: 15px; }
 
-/* ===== 日期详情 ===== */
+/* ---- 日期详情 ---- */
 .graph-detail {
   margin-top: 10px;
   padding-top: 10px;
