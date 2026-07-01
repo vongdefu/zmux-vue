@@ -70,6 +70,7 @@ function usePlayerStore() {
     activeLyrics,
     addCurrentToPlaylist,
     createPlaylist,
+    deletePlaylist,
     exportLibrary,
     importLibrary,
     isFavorite,
@@ -329,6 +330,14 @@ function saveRecommendedPlaylist(recommendedPlaylistId) {
 	  state.playlists.unshift(playlist);
 	  save();
 	  showToast('已收藏歌单');
+	}
+
+	function deletePlaylist(playlistId) {
+	  const idx = state.playlists.findIndex(p => p.id === playlistId);
+	  if (idx < 0) return;
+	  state.playlists.splice(idx, 1);
+	  save();
+	  showToast('歌单已删除');
 	}
 
 	function removeFromPlaylist(playlistId, track) {
