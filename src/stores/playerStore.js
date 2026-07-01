@@ -79,6 +79,7 @@ function usePlayerStore() {
     playTrack,
     previousTrack,
     removeFromPlaylist,
+    saveRecommendedPlaylist,
     save,
     search,
     setPlayMode,
@@ -311,7 +312,26 @@ function addCurrentToPlaylist(playlistId) {
   showToast('已加入歌单');
 }
 
-function removeFromPlaylist(playlistId, track) {
+function saveRecommendedPlaylist(recommendedPlaylistId) {
+	  const rec = state.recommendedPlaylists.find(p => p.id === recommendedPlaylistId);
+	  if (!rec) { showToast('歌单未找到'); return; }
+	  if (!rec.tracks || !rec.tracks.length) { showToast('歌单暂无歌曲'); return; }
+
+	  // 防止重复收藏（按名称判断）
+	  const exists = state.playlists.some(p => p.name === rec.name);
+	  if (exists) { showToast('歌单已在收藏中'); return; }
+
+	  const playlist = {
+	    id: `pl-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+	    name: rec.name,
+	    tracks: [...rec.tracks],
+	  };
+	  state.playlists.unshift(playlist);
+	  save();
+	  showToast('已收藏歌单');
+	}
+
+	function removeFromPlaylist(playlistId, track) {
   const playlist = state.playlists.find((item) => item.id === playlistId);
   if (!playlist || !track) return;
   const index = playlist.tracks.findIndex((item) => item.uid === track.uid);

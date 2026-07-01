@@ -191,7 +191,13 @@ function backToBrowse() {
       <!-- ========== 推荐歌单：详情 ========== -->
       <template v-else>
         <button class="back-button" @click="backToBrowse">← 推荐歌单</button>
-        <h2 class="playlist-detail-name">{{ selectedPlaylist?.name || "" }}</h2>
+        <div class="playlist-detail-header">
+          <h2 class="playlist-detail-name">{{ selectedPlaylist?.name || "" }}</h2>
+          <button
+            class="fave-playlist-btn"
+            @click="store.saveRecommendedPlaylist(selectedPlaylistId)"
+          >收藏歌单</button>
+        </div>
 
         <TrackList
           :tracks="selectedPlaylist?.tracks || []"
@@ -446,6 +452,30 @@ function backToBrowse() {
 .playlist-detail-name {
   margin: 0;
   font-size: 20px;
+}
+
+.playlist-detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.fave-playlist-btn {
+  border: 0;
+  border-radius: 8px;
+  padding: 6px 14px;
+  background: rgba(250, 35, 59, 0.08);
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+.fave-playlist-btn:active {
+  background: rgba(250, 35, 59, 0.16);
 }
 
 .empty-state {
