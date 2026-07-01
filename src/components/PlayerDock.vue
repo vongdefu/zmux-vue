@@ -13,6 +13,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  showMiniPlayer: {
+    type: Boolean,
+    default: true,
+  },
 })
 
 const audioRef = ref(null)
@@ -156,7 +160,7 @@ function onEnded() {
   />
 
   <div
-    v-if="state.currentTrack && !state.playerOpen"
+    v-if="showMiniPlayer && state.currentTrack && !state.playerOpen"
     class="mini-player"
     :style="{ bottom: miniBottom }"
   >

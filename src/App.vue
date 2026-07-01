@@ -1,5 +1,5 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import HomeView from './components/HomeView.vue'
 import MusicView from './components/MusicView.vue'
 import ProfileView from './components/ProfileView.vue'
@@ -12,9 +12,15 @@ import { usePlayerStore } from './stores/playerStore'
 
 const store = usePlayerStore()
 const currentView = ref('home')
-const tabBarVisible = computed(() =>
-  ['music','schedule','pomodoro','habit'].includes(currentView.value)
-)
+const tabBarVisible = computed(() => currentView.value !== 'profile')
+const showMiniPlayer = computed(() => currentView.value === 'music')
+
+// 离开音乐页时自动关闭全屏播放器
+watch(currentView, (v) => {
+  if (v !== 'music' && store.state.playerOpen) {
+    store.state.playerOpen = false
+  }
+})
 </script>
 
 <template>
@@ -26,10 +32,10 @@ const tabBarVisible = computed(() =>
     <PomodoroView v-if="currentView === 'pomodoro'" @back="currentView = 'home'" />
     <ProfileView  v-if="currentView === 'profile'"  :store="store" @back="currentView = 'music'" />
 
-    <PlayerDock :store="store" :tabBarVisible="tabBarVisible" />
+    <PlayerDock :store="store" :tabBarVisible="tabBarVisible" :showMiniPlayer="showMiniPlayer" />
 
     <TabBar
-      v-if="['music','schedule','pomodoro','habit'].includes(currentView)"
+      v-if="tabBarVisible"
       :currentView="currentView"
       @navigate="(v) => currentView = v"
     />
