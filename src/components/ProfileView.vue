@@ -65,16 +65,26 @@ const historyCount = computed(() => props.store.state.playHistory.length)
       />
 
       <!-- 历史记录 -->
-      <TrackList
-        v-else
-        :tracks="store.state.playHistory"
-        :current-track="store.state.currentTrack"
-        :is-favorite="store.isFavorite"
-        empty-text="播放过的歌曲会按时间出现在这里"
-        :removable="false"
-        @play="(_, index) => store.playTrack(store.state.playHistory[index])"
-        @favorite="store.toggleFavorite"
-      />
+      <template v-else>
+        <div class="history-actions">
+          <button
+            v-if="store.state.playHistory.length"
+            class="clear-history-btn"
+            @click="store.clearPlayHistory()"
+          >
+            清空历史记录
+          </button>
+        </div>
+        <TrackList
+          :tracks="store.state.playHistory"
+          :current-track="store.state.currentTrack"
+          :is-favorite="store.isFavorite"
+          empty-text="播放过的歌曲会按时间出现在这里"
+          :removable="false"
+          @play="(_, index) => store.playTrack(store.state.playHistory[index])"
+          @favorite="store.toggleFavorite"
+        />
+      </template>
 
     </div>
   </div>
@@ -163,5 +173,22 @@ const historyCount = computed(() => props.store.state.playHistory.length)
   flex: 1;
   overflow-y: auto;
   padding: 14px 18px 120px;
+}
+
+.history-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+.clear-history-btn {
+  border: 0;
+  border-radius: 8px;
+  padding: 6px 14px;
+  background: rgba(250, 35, 59, 0.08);
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
 }
 </style>

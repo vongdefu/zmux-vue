@@ -16,6 +16,7 @@ const showSearch = ref(false)
 const searchFocused = ref(false)
 const selectedPlaylistId = ref(null)
 const loadingTracks = ref(false)
+const loadingMore = ref(false)
 
 const selectedPlaylist = computed(
   () =>
@@ -23,6 +24,18 @@ const selectedPlaylist = computed(
       (p) => p.id === selectedPlaylistId.value,
     ) || null,
 )
+
+const hasMore = computed(() => {
+  const playlist = selectedPlaylist.value
+  if (!playlist || !playlist._tracksBuffer) return false
+  return playlist._tracksBuffer.length > (playlist.tracks || []).length
+})
+
+async function loadMore() {
+  loadingMore.value = true
+  await props.store.loadMorePlaylistTracks(selectedPlaylistId.value)
+  loadingMore.value = false
+}
 
 onMounted(() => {
   if (!props.store.state.recommendedPlaylists.length) {
@@ -205,19 +218,28 @@ function backToBrowse() {
         <div v-if="loadingTracks" class="empty-state">
           正在加载歌曲…
         </div>
-        <TrackList
-          v-else
-          :tracks="selectedPlaylist?.tracks || []"
-          :current-track="store.state.currentTrack"
-          :is-favorite="store.isFavorite"
-          empty-text="歌单暂无歌曲"
-          :removable="false"
-          @play="
-            (_, index) =>
-              store.playFromList('recommended', index, selectedPlaylistId)
-          "
-          @favorite="store.toggleFavorite"
-        />
+        <template v-else>
+          <TrackList
+            :tracks="selectedPlaylist?.tracks || []"
+            :current-track="store.state.currentTrack"
+            :is-favorite="store.isFavorite"
+            empty-text="歌单暂无歌曲"
+            :removable="false"
+            @play="
+              (_, index) =>
+                store.playFromList('recommended', index, selectedPlaylistId)
+            "
+            @favorite="store.toggleFavorite"
+          />
+          <button
+            v-if="hasMore"
+            class="load-more-btn"
+            :disabled="loadingMore"
+            @click="loadMore"
+          >
+            {{ loadingMore ? '加载中...' : `加载更多 (${selectedPlaylist?.tracks.length || 0}/${selectedPlaylist?._tracksBuffer?.length || 0})` }}
+          </button>
+        </template>
       </template>
     </div>
   </div>
@@ -314,7 +336,7 @@ function backToBrowse() {
 .music-content {
   flex: 1;
   overflow-y: auto;
-  padding: 0 18px 140px;
+  padding: 0 18px 190px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -490,5 +512,22 @@ function backToBrowse() {
   text-align: center;
   color: var(--text-secondary);
   font-size: 14px;
+}
+
+.load-more-btn {
+  width: 100%;
+  border: 0;
+  border-radius: var(--radius-md);
+  padding: 12px;
+  background: rgba(250, 35, 59, 0.08);
+  color: var(--accent);
+  font-size: var(--text-footnote);
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.load-more-btn:active {
+  background: rgba(250, 35, 59, 0.16);
 }
 </style>

@@ -1,6 +1,8 @@
 import { normalizeTrack } from './musicApi';
 
-const DISCOVER_URL = 'https://music.163.com/discover';
+const API_LIMIT = 15;
+const API_PATH = `/api/personalized/playlist?limit=${API_LIMIT}`;
+const API_URL = `https://music.163.com${API_PATH}`;
 
 const FALLBACK_PLAYLISTS = [
   { id: '3778678', name: '云音乐热歌榜', cover: null },
@@ -20,61 +22,40 @@ function getIdFromUrl(url) {
 }
 
 /**
- * 解析网易云发现页 HTML，提取所有歌单链接的 ID 和名称。
+ * 解析个性化推荐 API 的 JSON 响应，提取歌单列表。
  */
-function parseDiscoverHtml(html) {
-  const doc = new DOMParser().parseFromString(html, 'text/html');
-  const seen = new Set();
-  const playlists = [];
+function parsePlaylistResponse(data) {
+  if (!data || data.code !== 200 || !Array.isArray(data.result)) {
+    throw new Error('API 返回数据格式异常');
+  }
 
-  doc.querySelectorAll('a[href*="/playlist?"]').forEach((link) => {
-    const href = link.getAttribute('href');
-    const playlistId = getIdFromUrl(href);
-    if (!playlistId || seen.has(playlistId)) return;
-
-    const name = (link.getAttribute('title') || link.textContent || '').trim();
-    if (!name) return;
-
-    // 封面图可能在 <a> 内部（子元素），也可能在父容器的兄弟节点中
-    // 网易云发现页结构: <li><img /><a href="/playlist?...">...</a></li>
-    let cover = link.querySelector('img')?.getAttribute('src') || null;
-    if (!cover) {
-      const parent = link.closest('li, div[class]') || link.parentElement;
-      if (parent) {
-        const img = parent.querySelector('img');
-        cover = img?.getAttribute('src')
-          || img?.getAttribute('data-src')
-          || img?.getAttribute('data-original')
-          || null;
-      }
-    }
-    if (cover && cover.startsWith('//')) cover = 'https:' + cover;
-
-    seen.add(playlistId);
-    playlists.push({ id: playlistId, name, cover });
-  });
+  const playlists = data.result.map((item) => ({
+    id: String(item.id),
+    name: item.name || '',
+    cover: item.picUrl || null,
+  }));
 
   if (!playlists.length) {
-    throw new Error('发现页未找到任何歌单链接');
+    throw new Error('API 未返回任何歌单');
   }
 
   return playlists;
 }
 
 /**
- * 通过指定 URL 获取发现页并解析歌单列表。
+ * 通过指定 URL 请求歌单 API 并解析。
  */
-async function tryFetchDiscover(fetchUrl) {
+async function tryFetchPlaylists(fetchUrl) {
   const response = await fetch(fetchUrl);
   if (!response.ok) {
     throw new Error(`HTTP ${response.status}`);
   }
-  const html = await response.text();
-  return parseDiscoverHtml(html);
+  const data = await response.json();
+  return parsePlaylistResponse(data);
 }
 
 /**
- * 请求网易云音乐发现页，解析页面中所有歌单 a 标签。
+ * 获取推荐歌单列表。
  *
  * 三层降级策略：
  * 1. Vite dev proxy（yarn dev 时可用）
@@ -84,15 +65,15 @@ async function tryFetchDiscover(fetchUrl) {
 export async function fetchDiscoverPlaylists() {
   // 1) Vite 开发代理
   try {
-    return await tryFetchDiscover('/api/proxy/netease/discover');
+    return await tryFetchPlaylists(`/api/proxy/netease${API_PATH}`);
   } catch (e) {
     console.warn('Vite dev proxy 失败，尝试 CORS 代理...', e.message);
   }
 
   // 2) 公共 CORS 代理
   try {
-    const corsProxyUrl = `https://corsproxy.io/?${encodeURIComponent(DISCOVER_URL)}`;
-    return await tryFetchDiscover(corsProxyUrl);
+    const corsProxyUrl = `https://corsproxy.io/?${encodeURIComponent(API_URL)}`;
+    return await tryFetchPlaylists(corsProxyUrl);
   } catch (e) {
     console.warn('CORS 代理失败，使用静态歌单兜底...', e.message);
   }

@@ -92,7 +92,12 @@ function usePlayerStore() {
     fetchRecommendedPlaylistTracks,
     refreshRecommendedPlaylists,
     selectRecommendedPlaylist,
-    resetSkipCounter
+    loadMorePlaylistTracks,
+    loadSavedPlaylistTracks,
+    loadMoreSavedPlaylistTracks,
+    loadInitialSavedPlaylistTracks,
+    resetSkipCounter,
+    clearPlayHistory
   };
 }
 
@@ -314,23 +319,70 @@ function addCurrentToPlaylist(playlistId) {
 }
 
 function saveRecommendedPlaylist(recommendedPlaylistId) {
-	  const rec = state.recommendedPlaylists.find(p => p.id === recommendedPlaylistId);
-	  if (!rec) { showToast('歌单未找到'); return; }
-	  if (!rec.tracks || !rec.tracks.length) { showToast('歌单暂无歌曲'); return; }
+  const rec = state.recommendedPlaylists.find(p => p.id === recommendedPlaylistId);
+  if (!rec) { showToast('歌单未找到'); return; }
 
-	  // 防止重复收藏（按名称判断）
-	  const exists = state.playlists.some(p => p.name === rec.name);
-	  if (exists) { showToast('歌单已在收藏中'); return; }
+  // 防止重复收藏（按名称判断）
+  const exists = state.playlists.some(p => p.name === rec.name);
+  if (exists) { showToast('歌单已在收藏中'); return; }
 
-	  const playlist = {
-	    id: `pl-${Date.now()}-${Math.random().toString(16).slice(2)}`,
-	    name: rec.name,
-	    tracks: [...rec.tracks],
-	  };
-	  state.playlists.unshift(playlist);
-	  save();
-	  showToast('已收藏歌单');
-	}
+  const playlist = {
+    id: `pl-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+    name: rec.name,
+    sourcePlaylistId: rec.id,      // 只存引用，不存歌曲数据
+    tracks: [],
+  };
+  state.playlists.unshift(playlist);
+  save();
+  showToast('已收藏歌单');
+}
+
+const SAVED_PLAYLIST_BATCH_SIZE = 15;
+
+async function loadSavedPlaylistTracks(playlistId) {
+  const playlist = state.playlists.find((item) => item.id === playlistId);
+  if (!playlist || !playlist.sourcePlaylistId) return;
+  if (playlist._tracksBuffer) return; // already fetched
+
+  try {
+    const tracks = await fetchPlaylistTracks(playlist.sourcePlaylistId);
+    tracks.forEach((track) => {
+      if (!track?.uid || state.trackMap.has(track.uid)) return;
+      state.trackMap.set(track.uid, track);
+    });
+    playlist._tracksBuffer = tracks;
+    playlist._batchIndex = 0;
+  } catch (error) {
+    console.warn('加载歌单歌曲失败', error);
+    showToast('加载歌单歌曲失败，请重试');
+    throw error;
+  }
+}
+
+async function loadMoreSavedPlaylistTracks(playlistId) {
+  const playlist = state.playlists.find((item) => item.id === playlistId);
+  if (!playlist || !playlist._tracksBuffer) return false;
+
+  const buffer = playlist._tracksBuffer;
+  const start = playlist._batchIndex * SAVED_PLAYLIST_BATCH_SIZE;
+  const end = start + SAVED_PLAYLIST_BATCH_SIZE;
+  const batch = buffer.slice(start, end);
+
+  if (!batch.length) return false;
+
+  await new Promise((r) => setTimeout(r, 150));
+
+  const existing = playlist.tracks || [];
+  playlist.tracks = [...existing, ...batch];
+  playlist._batchIndex += 1;
+
+  return end < buffer.length;
+}
+
+async function loadInitialSavedPlaylistTracks(playlistId) {
+  await loadSavedPlaylistTracks(playlistId);
+  await loadMoreSavedPlaylistTracks(playlistId);
+}
 
 	function deletePlaylist(playlistId) {
 	  const idx = state.playlists.findIndex(p => p.id === playlistId);
@@ -451,7 +503,7 @@ async function refreshRecommendedPlaylists() {
 async function fetchRecommendedPlaylistTracks(playlistId) {
   const playlist = state.recommendedPlaylists.find((item) => item.id === playlistId);
   if (!playlist) return;
-  if (playlist.tracks.length) return;
+  if (playlist._tracksBuffer) return; // already fetched
 
   state.recommendedLoading = true;
   try {
@@ -460,7 +512,9 @@ async function fetchRecommendedPlaylistTracks(playlistId) {
       if (!track?.uid || state.trackMap.has(track.uid)) return;
       state.trackMap.set(track.uid, track);
     });
-    playlist.tracks = tracks;
+    // Store all tracks in a buffer; only expose first batch via playlist.tracks
+    playlist._tracksBuffer = tracks;
+    playlist._batchIndex = 0;
   } catch (error) {
     console.warn('获取推荐歌单失败', error);
     showToast('获取歌单失败，请重试');
@@ -469,12 +523,43 @@ async function fetchRecommendedPlaylistTracks(playlistId) {
   }
 }
 
+const PLAYLIST_BATCH_SIZE = 10;
+
+async function loadMorePlaylistTracks(playlistId) {
+  const playlist = state.recommendedPlaylists.find((item) => item.id === playlistId);
+  if (!playlist || !playlist._tracksBuffer) return false;
+
+  const buffer = playlist._tracksBuffer;
+  const start = playlist._batchIndex * PLAYLIST_BATCH_SIZE;
+  const end = start + PLAYLIST_BATCH_SIZE;
+  const batch = buffer.slice(start, end);
+
+  if (!batch.length) return false;
+
+  // Async delay so DOM settles before the next batch
+  await new Promise((r) => setTimeout(r, 150));
+
+  const existing = playlist.tracks || [];
+  playlist.tracks = [...existing, ...batch];
+  playlist._batchIndex += 1;
+
+  return end < buffer.length; // true if more remain
+}
+
 async function selectRecommendedPlaylist(playlistId) {
   await fetchRecommendedPlaylistTracks(playlistId);
+  // Load first batch asynchronously
+  await loadMorePlaylistTracks(playlistId);
 }
 
 function resetSkipCounter() {
   state.consecutiveSkipCount = 0;
+}
+
+function clearPlayHistory() {
+  state.playHistory = [];
+  save();
+  showToast('历史记录已清空');
 }
 
 function showToast(message) {

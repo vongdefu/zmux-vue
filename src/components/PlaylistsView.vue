@@ -12,6 +12,8 @@ const props = defineProps({
 const newName = ref("")
 const selectedId = ref(props.store.state.playlists[0]?.id || "")
 const fileInput = ref(null)
+const loadingSavedTracks = ref(false)
+const loadingMoreSaved = ref(false)
 
 function create() {
   const playlist = props.store.createPlaylist(newName.value)
@@ -19,8 +21,20 @@ function create() {
   newName.value = ""
 }
 
-function selectPlaylist(id) {
+async function selectPlaylist(id) {
   selectedId.value = id
+  const playlist = props.store.state.playlists.find(p => p.id === id)
+  // 引用型歌单（来自推荐歌单收藏）且未加载过 → 按需加载
+  if (playlist && playlist.sourcePlaylistId && !playlist._tracksBuffer) {
+    loadingSavedTracks.value = true
+    try {
+      await props.store.loadInitialSavedPlaylistTracks(id)
+    } catch {
+      // error toast already shown by store
+    } finally {
+      loadingSavedTracks.value = false
+    }
+  }
 }
 
 function backToList() {
@@ -35,6 +49,18 @@ function onDeletePlaylist(id) {
 const selectedPlaylist = computed(() =>
   props.store.state.playlists.find(p => p.id === selectedId.value) || null
 )
+
+const hasMoreSaved = computed(() => {
+  const playlist = selectedPlaylist.value
+  if (!playlist || !playlist._tracksBuffer) return false
+  return playlist._tracksBuffer.length > (playlist.tracks || []).length
+})
+
+async function loadMoreSaved() {
+  loadingMoreSaved.value = true
+  await props.store.loadMoreSavedPlaylistTracks(selectedId.value)
+  loadingMoreSaved.value = false
+}
 
 function downloadJson() {
   const payload = props.store.exportLibrary()
@@ -86,16 +112,30 @@ function coverGradient(name) {
         <span class="detail-count">{{ selectedPlaylist?.tracks.length || 0 }} 首</span>
         <button class="del-btn" @click="onDeletePlaylist(selectedId)">删除歌单</button>
       </div>
-      <TrackList
-        :tracks="selectedPlaylist?.tracks || []"
-        :current-track="store.state.currentTrack"
-        :is-favorite="store.isFavorite"
-        empty-text="歌单暂无歌曲"
-        :removable="true"
-        @play="(_, index) => store.playFromList('playlist', index, selectedId)"
-        @favorite="store.toggleFavorite"
-        @remove="(track) => store.removeFromPlaylist(selectedId, track)"
-      />
+
+      <div v-if="loadingSavedTracks" class="empty-state">
+        正在加载歌曲…
+      </div>
+      <template v-else>
+        <TrackList
+          :tracks="selectedPlaylist?.tracks || []"
+          :current-track="store.state.currentTrack"
+          :is-favorite="store.isFavorite"
+          empty-text="歌单暂无歌曲"
+          :removable="true"
+          @play="(_, index) => store.playFromList('playlist', index, selectedId)"
+          @favorite="store.toggleFavorite"
+          @remove="(track) => store.removeFromPlaylist(selectedId, track)"
+        />
+        <button
+          v-if="hasMoreSaved"
+          class="load-more-btn"
+          :disabled="loadingMoreSaved"
+          @click="loadMoreSaved"
+        >
+          {{ loadingMoreSaved ? '加载中...' : `加载更多 (${selectedPlaylist?.tracks.length || 0}/${selectedPlaylist?._tracksBuffer?.length || 0})` }}
+        </button>
+      </template>
     </template>
 
     <!-- ===== 歌单网格视图 ===== -->
@@ -255,4 +295,17 @@ function coverGradient(name) {
   background: rgba(250,35,59,0.08); color: var(--accent);
   font-size: 13px; font-weight: 700; cursor: pointer; flex-shrink: 0;
 }
+
+.load-more-btn {
+  width: 100%; border: 0;
+  border-radius: var(--radius-md);
+  padding: 12px;
+  background: rgba(250, 35, 59, 0.08);
+  color: var(--accent);
+  font-size: var(--text-footnote);
+  font-weight: 700; cursor: pointer;
+  transition: background 0.15s;
+}
+.load-more-btn:active { background: rgba(250, 35, 59, 0.16); }
+.load-more-btn:disabled { opacity: 0.5; cursor: default; }
 </style>

@@ -49,11 +49,20 @@ export function createSnapshot(favorites, playlists) {
     version: 1,
     savedAt: new Date().toISOString(),
     favorites: favorites.map(serializeTrack).filter(Boolean),
-    playlists: playlists.map((playlist) => ({
-      id: playlist.id,
-      name: playlist.name,
-      tracks: (playlist.tracks || []).map(serializeTrack).filter(Boolean),
-    })),
+    playlists: playlists.map((playlist) => {
+      const data = {
+        id: playlist.id,
+        name: playlist.name,
+        tracks: [],
+      };
+      // 引用型歌单只存 sourcePlaylistId，歌曲按需加载
+      if (playlist.sourcePlaylistId) {
+        data.sourcePlaylistId = playlist.sourcePlaylistId;
+      } else {
+        data.tracks = (playlist.tracks || []).map(serializeTrack).filter(Boolean);
+      }
+      return data;
+    }),
   }
 }
 
@@ -77,6 +86,7 @@ export function loadLibrary() {
         ? data.playlists.map((playlist, index) => ({
             id: playlist.id || `pl-cached-${index}-${Date.now()}`,
             name: playlist.name || "未命名歌单",
+            sourcePlaylistId: playlist.sourcePlaylistId || null,
             tracks: Array.isArray(playlist.tracks)
               ? playlist.tracks.map(deserializeTrack).filter(Boolean)
               : [],
