@@ -72,7 +72,7 @@ function onActiveIndexChanged(idx) {
 /* ===== Liquid Glass Shell ===== */
 .liquid-glass-widget {
   position: relative;
-  height: 300px;
+  height: 350px;
   border-radius: var(--radius-lg);
   overflow: hidden;
   margin-bottom: var(--space-lg);
