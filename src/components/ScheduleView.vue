@@ -250,8 +250,8 @@ function isAdding(weekId, parentId) {
       <h1>日程管理</h1>
     </header>
 
-    <div class="s-body">
-      <!-- Slogan 滚动条 -->
+    <!-- 固定头部：slogan + 进度条 + 年份标签 -->
+    <div class="s-fixed-head">
       <div class="s-slogan">
         <div class="slogan-wrap">
           <span class="slogan-track">
@@ -263,7 +263,6 @@ function isAdding(weekId, parentId) {
         </div>
       </div>
 
-      <!-- 年度进度条 -->
       <div class="s-year-progress">
         <div class="yrp-info">
           <span class="yrp-label">{{ currentYear }} 年已过</span>
@@ -278,7 +277,6 @@ function isAdding(weekId, parentId) {
         </div>
       </div>
 
-      <!-- 年份标签 + 年报 -->
       <div class="s-year-bar">
         <div class="s-year-tabs">
           <button
@@ -295,8 +293,10 @@ function isAdding(weekId, parentId) {
           @click="showAnnual = true"
         >📊 年报</button>
       </div>
+    </div>
 
-      <!-- 主内容区 -->
+    <!-- 滚动区域：仅周数列表 -->
+    <div class="s-body">
       <div class="s-content">
 
         <!-- ========== 年报占位 ========== -->
@@ -501,6 +501,13 @@ function isAdding(weekId, parentId) {
 }
 .s-top-bar h1 { margin: 0; font-size: 22px; font-weight: 800; }
 
+/* ========== 固定头部 ========== */
+.s-fixed-head {
+  flex-shrink: 0;
+  padding: 0 18px;
+}
+
+/* ========== 滚动区域（仅周列表） ========== */
 .s-body {
   flex: 1; overflow-y: auto;
   padding: 0 18px 120px;
