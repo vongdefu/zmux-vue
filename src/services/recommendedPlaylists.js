@@ -2,6 +2,7 @@ import { normalizeTrack } from './musicApi';
 
 const API_LIMIT = 15;
 const API_PATH = `/api/personalized/playlist?limit=${API_LIMIT}`;
+const API_URL = `https://music.163.com${API_PATH}`;
 
 const FALLBACK_PLAYLISTS = [
   { id: '3778678', name: '云音乐热歌榜', cover: null },
@@ -67,11 +68,18 @@ export async function fetchDiscoverPlaylists() {
     try {
       return await tryFetchPlaylists(`/api/proxy/netease${API_PATH}`);
     } catch (e) {
-      console.warn('Vite dev proxy 失败，使用内置歌单...', e.message);
+      console.warn('Vite dev proxy 失败，尝试直连...', e.message);
     }
   }
 
-  // 2) 生产环境：直接使用内置歌单（网易云 API 有 CORS 限制，浏览器无法直接访问）
+  // 2) 直连网易云 API
+  try {
+    return await tryFetchPlaylists(API_URL);
+  } catch (e) {
+    console.warn('直连失败，使用内置歌单...', e.message);
+  }
+
+  // 3) 静态兜底歌单
   return FALLBACK_PLAYLISTS;
 }
 
