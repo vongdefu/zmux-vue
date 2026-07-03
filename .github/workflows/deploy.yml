@@ -23,7 +23,7 @@ jobs:
           cache: 'yarn' # 📌 启用 yarn 缓存加速打包
 
       - name: Install Dependencies 📦
-        run: yarn install --frozen-lockfile # 📌 使用 lockfile 锁定版本，适合 CI 环境
+        run: yarn install
 
       - name: Build Project 🏗️
         run: yarn build # 📌 执行 Vite 打包，默认输出到 dist 目录
