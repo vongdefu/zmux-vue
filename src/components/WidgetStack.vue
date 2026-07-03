@@ -122,12 +122,12 @@ onBeforeUnmount(() => {
 /* Page indicator */
 .ws-dots {
   position: absolute;
-  right: 6px;
+  right: var(--space-xs);
   top: 50%;
   transform: translateY(-50%);
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--space-xs);
   z-index: 2;
 }
 .ws-dot {
