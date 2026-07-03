@@ -267,6 +267,14 @@ const modules = computed(() => [
     bg: 'linear-gradient(135deg, #ff9f0a, #ffb340)',
     summary: '记录开销，管理预算',
   },
+  {
+    id: 'calendar',
+    icon: '📅',
+    label: '日历管理',
+    color: '#007AFF',
+    bg: 'linear-gradient(135deg, #007AFF, #5AC8FA)',
+    summary: '管理日程与事件',
+  },
 ])
 </script>
 

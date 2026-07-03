@@ -7,6 +7,7 @@ import ScheduleView from './components/ScheduleView.vue'
 import HabitView from './components/HabitView.vue'
 import PomodoroView from './components/PomodoroView.vue'
 import AccountingView from './components/AccountingView.vue'
+import CalendarView from './components/CalendarView.vue'
 import PlayerDock from './components/PlayerDock.vue'
 import TabBar from './components/TabBar.vue'
 import { usePlayerStore } from './stores/playerStore'
@@ -34,6 +35,7 @@ watch(currentView, (v) => {
         <HabitView     v-if="currentView === 'habit'"    @back="currentView = 'home'" />
         <PomodoroView v-if="currentView === 'pomodoro'" @back="currentView = 'home'" />
         <AccountingView v-if="currentView === 'accounting'" @back="currentView = 'home'" />
+        <CalendarView v-if="currentView === 'calendar'" @back="currentView = 'home'" />
         <ProfileView  v-if="currentView === 'profile'"  :store="store" @back="currentView = 'music'" />
 
         <PlayerDock :store="store" :tabBarVisible="tabBarVisible" :showMiniPlayer="showMiniPlayer" />
