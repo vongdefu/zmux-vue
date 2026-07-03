@@ -29,7 +29,7 @@ jobs:
         run: yarn build # 📌 执行 Vite 打包，默认输出到 dist 目录
 
       - name: Deploy to GitHub Pages 🚀
-        uses: actions/deploy-pages@v4
-        # with:
-        #   folder: dist # Vite 打包生成的文件夹
-        #   branch: gh-pages # 自动推送到 gh-pages 分支
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: dist # Vite 打包生成的文件夹
+          branch: gh-pages # 自动推送到 gh-pages 分支
