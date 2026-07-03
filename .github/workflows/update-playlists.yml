@@ -1,0 +1,38 @@
+name: Update Playlists
+
+on:
+  schedule:
+    # 每天 UTC 2:00（北京时间 10:00）执行
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 🟢
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: "yarn"
+
+      - name: Install Dependencies 📦
+        run: yarn install
+
+      - name: Fetch Latest Playlists 🎵
+        run: node scripts/fetch-playlists.js
+
+      - name: Commit & Push 📤
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add public/playlists.json
+          git diff --staged --quiet || git commit -m "chore: auto-update playlists"
+          git push
