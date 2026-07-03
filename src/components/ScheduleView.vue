@@ -37,6 +37,15 @@ let reportSaveTimer = null
 const currentYear = new Date().getFullYear()
 const todayMonday = getTodayMondayStr()
 
+const yearProgress = computed(() => {
+  const now = new Date()
+  const start = new Date(now.getFullYear(), 0, 1)
+  const end = new Date(now.getFullYear(), 11, 31)
+  const total = Math.ceil((end - start) / 86400000) + 1
+  const elapsed = Math.floor((now - start) / 86400000) + 1
+  return { elapsed, total, pct: Math.round((elapsed / total) * 100) }
+})
+
 const years = computed(() => {
   const result = []
   for (let y = currentYear - 4; y <= currentYear; y++) result.push(y)
@@ -251,6 +260,21 @@ function isAdding(weekId, parentId) {
             <span class="slogan-item">看五年，想三年，踏踏实实干一年</span>
             <span class="slogan-gap">✦</span>
           </span>
+        </div>
+      </div>
+
+      <!-- 年度进度条 -->
+      <div class="s-year-progress">
+        <div class="yrp-info">
+          <span class="yrp-label">{{ currentYear }} 年已过</span>
+          <span class="yrp-pct">{{ yearProgress.pct }}%</span>
+        </div>
+        <div class="yrp-track">
+          <div class="yrp-fill" :style="{ width: yearProgress.pct + '%' }"></div>
+        </div>
+        <div class="yrp-days">
+          <span>第 {{ yearProgress.elapsed }} 天</span>
+          <span>共 {{ yearProgress.total }} 天</span>
         </div>
       </div>
 
@@ -505,6 +529,53 @@ function isAdding(weekId, parentId) {
 @keyframes slogan-scroll {
   0% { transform: translateX(0); }
   100% { transform: translateX(-50%); }
+}
+
+/* ========== 年度进度条 ========== */
+.s-year-progress {
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  background: var(--glass-bg-light);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 0.5px solid var(--glass-border-light);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.yrp-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.yrp-label {
+  font-size: var(--text-footnote);
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+.yrp-pct {
+  font-size: var(--text-headline);
+  font-weight: 800;
+  color: var(--accent);
+}
+.yrp-track {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--separator);
+  overflow: hidden;
+}
+.yrp-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--accent), #f06c6c);
+  transition: width 0.6s ease;
+  min-width: 0;
+}
+.yrp-days {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--text-caption);
+  color: var(--text-tertiary);
 }
 
 /* ========== 年份标签 ========== */
