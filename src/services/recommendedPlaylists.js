@@ -2,7 +2,6 @@ import { normalizeTrack } from './musicApi';
 
 const API_LIMIT = 15;
 const API_PATH = `/api/personalized/playlist?limit=${API_LIMIT}`;
-const API_URL = `https://music.163.com${API_PATH}`;
 
 const FALLBACK_PLAYLISTS = [
   { id: '3778678', name: '云音乐热歌榜', cover: null },
@@ -63,30 +62,16 @@ async function tryFetchPlaylists(fetchUrl) {
  * 3. 内置静态歌单列表（兜底）
  */
 export async function fetchDiscoverPlaylists() {
-  // 1) Vite 开发代理（仅 dev 模式）
+  // 1) Vite 开发代理（仅 dev 模式可用）
   if (import.meta.env.DEV) {
     try {
       return await tryFetchPlaylists(`/api/proxy/netease${API_PATH}`);
     } catch (e) {
-      console.warn('Vite dev proxy 失败，尝试 CORS 代理...', e.message);
+      console.warn('Vite dev proxy 失败，使用内置歌单...', e.message);
     }
   }
 
-  // 2) 公共 CORS 代理（多源尝试）
-  const corsProxies = [
-    (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-    (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
-  ]
-  for (const buildUrl of corsProxies) {
-    try {
-      return await tryFetchPlaylists(buildUrl(API_URL));
-    } catch (e) {
-      console.warn(`CORS 代理 ${buildUrl('').split('?')[0]} 失败:`, e.message);
-    }
-  }
-
-  // 3) 静态兜底歌单
-  console.info('所有远程请求失败，使用内置歌单');
+  // 2) 生产环境：直接使用内置歌单（网易云 API 有 CORS 限制，浏览器无法直接访问）
   return FALLBACK_PLAYLISTS;
 }
 
