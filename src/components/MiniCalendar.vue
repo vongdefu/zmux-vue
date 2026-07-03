@@ -178,7 +178,7 @@ function onDateClick(dateKey) {
 
 <style scoped>
 .mini-calendar {
-  width: 100px;
+  width: 45%;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
@@ -186,11 +186,13 @@ function onDateClick(dateKey) {
   border-right: 0.5px solid var(--separator);
   transition: width 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
   overflow: hidden;
+  justify-content: center;
 }
 
 .mini-calendar-expanded {
   width: 100%;
   border-right: 0;
+  justify-content: normal;
 }
 
 /* === Mini Mode === */
