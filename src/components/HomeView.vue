@@ -2,9 +2,10 @@
 import { computed, onMounted, ref } from 'vue'
 import { usePlayerStore } from '../stores/playerStore'
 import { loadPomodoro, dateKey } from '../services/pomodoroStorage'
-import { loadSchedule } from '../services/scheduleStorage'
-import { loadHabits } from '../services/habitStorage'
+import { loadSchedule, saveSchedule } from '../services/scheduleStorage'
+import { loadHabits, saveHabits } from '../services/habitStorage'
 import { getTodayMondayStr } from '../services/scheduleStorage'
+import LiquidGlassWidget from './LiquidGlassWidget.vue'
 
 const emit = defineEmits(['navigate'])
 const store = usePlayerStore()
@@ -115,6 +116,107 @@ const overviewItems = computed(() => [
   },
 ])
 
+/* ===== LiquidGlass 组件数据 ===== */
+const favoriteTrackIds = computed(() => new Set(
+  store.state.favorites.map(f => f.uid)
+))
+
+const isCurrentFavorite = computed(() =>
+  store.state.currentTrack
+    ? favoriteTrackIds.value.has(store.state.currentTrack.uid)
+    : false
+)
+
+// Flatten incomplete tasks for the schedule widget
+const flatIncompleteTasks = computed(() => {
+  const schedule = loadSchedule()
+  const year = new Date().getFullYear()
+  const yearData = schedule[year]
+  if (!yearData?.weeks?.length) return []
+  const todayMonday = getTodayMondayStr()
+  const week = yearData.weeks.find(w => w.monday === todayMonday)
+  if (!week) return []
+
+  function flatten(tasks, result = []) {
+    for (const t of tasks) {
+      result.push({ id: t.id, text: t.text, completed: t.completed })
+      if (t.children?.length) flatten(t.children, result)
+    }
+    return result
+  }
+  return flatten(week.tasks || [])
+})
+
+// Habits with today's completion status
+const habitsWithToday = computed(() => {
+  const habits = loadHabits()
+  const today = dateKey(new Date())
+  return habits.map(h => ({
+    id: h.id,
+    name: h.name,
+    color: h.color,
+    completedToday: Boolean(h.completions?.[today]),
+  }))
+})
+
+/* ===== Widget 事件处理 ===== */
+function onWidgetNavigate(view) {
+  emit('navigate', view)
+}
+
+function onSkipNext() {
+  store.nextTrack()
+}
+
+function onSkipPrev() {
+  store.previousTrack()
+}
+
+function onToggleFavorite() {
+  store.toggleFavorite()
+}
+
+function onToggleTask(taskId) {
+  const schedule = loadSchedule()
+  const year = new Date().getFullYear()
+  const yearData = schedule[year]
+  if (!yearData?.weeks?.length) return
+  const todayMonday = getTodayMondayStr()
+  const week = yearData.weeks.find(w => w.monday === todayMonday)
+  if (!week) return
+
+  function toggleInList(tasks) {
+    for (const t of tasks) {
+      if (t.id === taskId) {
+        t.completed = !t.completed
+        return true
+      }
+      if (t.children?.length && toggleInList(t.children)) return true
+    }
+    return false
+  }
+
+  if (toggleInList(week.tasks || [])) {
+    saveSchedule(schedule)
+    refreshSchedule()
+  }
+}
+
+function onToggleHabit(habitId) {
+  const habits = loadHabits()
+  const habit = habits.find(h => h.id === habitId)
+  if (!habit) return
+  const today = dateKey(new Date())
+  if (!habit.completions) habit.completions = {}
+  if (habit.completions[today]) {
+    delete habit.completions[today]
+  } else {
+    habit.completions[today] = true
+  }
+  saveHabits(habits)
+  calcStreak()
+}
+
 /* ===== 模块列表 ===== */
 const modules = computed(() => [
   {
@@ -192,6 +294,21 @@ const modules = computed(() => [
         </button>
       </div>
     </section>
+
+    <!-- Liquid Glass Widget -->
+    <LiquidGlassWidget
+      :track="store.state.currentTrack"
+      :isFavorite="isCurrentFavorite"
+      :pomodoroCount="todayPomodoros"
+      :tasks="flatIncompleteTasks"
+      :habits="habitsWithToday"
+      @skip-next="onSkipNext"
+      @skip-prev="onSkipPrev"
+      @toggle-favorite="onToggleFavorite"
+      @navigate="onWidgetNavigate"
+      @toggle-task="onToggleTask"
+      @toggle-habit="onToggleHabit"
+    />
 
     <!-- 模块入口列表（iOS Setting 风格） -->
     <section class="module-list">
