@@ -19,8 +19,8 @@ jobs:
       - name: Set up Node.js 🟢
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: 'yarn' # 📌 启用 yarn 缓存加速打包
+          node-version: lts/*
+          cache: "yarn"
 
       - name: Install Dependencies 📦
         run: yarn install
@@ -29,7 +29,7 @@ jobs:
         run: yarn build # 📌 执行 Vite 打包，默认输出到 dist 目录
 
       - name: Deploy to GitHub Pages 🚀
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          folder: dist # Vite 打包生成的文件夹
-          branch: gh-pages # 自动推送到 gh-pages 分支
+        uses: actions/deploy-pages@v4
+        # with:
+        #   folder: dist # Vite 打包生成的文件夹
+        #   branch: gh-pages # 自动推送到 gh-pages 分支
