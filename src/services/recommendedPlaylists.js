@@ -63,22 +63,30 @@ async function tryFetchPlaylists(fetchUrl) {
  * 3. 内置静态歌单列表（兜底）
  */
 export async function fetchDiscoverPlaylists() {
-  // 1) Vite 开发代理
-  try {
-    return await tryFetchPlaylists(`/api/proxy/netease${API_PATH}`);
-  } catch (e) {
-    console.warn('Vite dev proxy 失败，尝试 CORS 代理...', e.message);
+  // 1) Vite 开发代理（仅 dev 模式）
+  if (import.meta.env.DEV) {
+    try {
+      return await tryFetchPlaylists(`/api/proxy/netease${API_PATH}`);
+    } catch (e) {
+      console.warn('Vite dev proxy 失败，尝试 CORS 代理...', e.message);
+    }
   }
 
-  // 2) 公共 CORS 代理
-  try {
-    const corsProxyUrl = `https://corsproxy.io/?${encodeURIComponent(API_URL)}`;
-    return await tryFetchPlaylists(corsProxyUrl);
-  } catch (e) {
-    console.warn('CORS 代理失败，使用静态歌单兜底...', e.message);
+  // 2) 公共 CORS 代理（多源尝试）
+  const corsProxies = [
+    (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+    (url) => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+  ]
+  for (const buildUrl of corsProxies) {
+    try {
+      return await tryFetchPlaylists(buildUrl(API_URL));
+    } catch (e) {
+      console.warn(`CORS 代理 ${buildUrl('').split('?')[0]} 失败:`, e.message);
+    }
   }
 
   // 3) 静态兜底歌单
+  console.info('所有远程请求失败，使用内置歌单');
   return FALLBACK_PLAYLISTS;
 }
 
