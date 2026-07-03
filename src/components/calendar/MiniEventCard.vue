@@ -6,17 +6,17 @@ const props = defineProps({
 
 const emit = defineEmits(['click'])
 
-const cal = calendars.length
-  ? calendars.find(c => c.id === props.event.calendarId)
+const cal = props.calendars.length
+  ? props.calendars.find(c => c.id === props.event.calendarId)
   : null
 
 const dotColor = cal?.color || '#007AFF'
 </script>
 
 <template>
-  <button class="mini-event" :style="{ '--dot': dotColor }" @click.stop="emit('click', event)">
+  <button class="mini-event" :style="{ '--dot': dotColor }" @click.stop="emit('click', props.event)">
     <span class="me-dot"></span>
-    <span class="me-title">{{ event.title }}</span>
+    <span class="me-title">{{ props.event.title }}</span>
   </button>
 </template>
 
