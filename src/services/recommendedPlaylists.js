@@ -50,7 +50,7 @@ async function loadPool() {
 
   // 生产环境：读本地预生成的 JSON
   try {
-    const resp = await fetch('/playlists.json');
+    const resp = await fetch(import.meta.env.BASE_URL + 'playlists.json');
     if (resp.ok) {
       const list = await resp.json();
       if (Array.isArray(list) && list.length) return list;
