@@ -68,18 +68,25 @@ export async function fetchDiscoverPlaylists() {
     try {
       return await tryFetchPlaylists(`/api/proxy/netease${API_PATH}`);
     } catch (e) {
-      console.warn('Vite dev proxy 失败，尝试直连...', e.message);
+      console.warn('Vite dev proxy 失败，尝试 CORS 代理...', e.message);
     }
   }
 
-  // 2) 直连网易云 API
-  try {
-    return await tryFetchPlaylists(API_URL);
-  } catch (e) {
-    console.warn('直连失败，使用内置歌单...', e.message);
+  // 2) CORS 代理（多源尝试）
+  const corsProxies = [
+    (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+    (url) => `https://cors-anywhere.herokuapp.com/${url}`,
+  ]
+  for (const buildUrl of corsProxies) {
+    try {
+      return await tryFetchPlaylists(buildUrl(API_URL));
+    } catch (e) {
+      console.warn(`CORS 代理失败:`, e.message);
+    }
   }
 
   // 3) 静态兜底歌单
+  console.info('所有远程请求失败，使用内置歌单');
   return FALLBACK_PLAYLISTS;
 }
 
