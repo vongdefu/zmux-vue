@@ -15,6 +15,7 @@ const tabs = [
   { id: 'schedule', icon: '📅', label: '日程' },
   { id: 'pomodoro', icon: '🍅', label: '番茄' },
   { id: 'habit', icon: '✅', label: '习惯' },
+  { id: 'accounting', icon: '💰', label: '记账' },
 ]
 </script>
 

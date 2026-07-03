@@ -157,6 +157,14 @@ const modules = computed(() => [
       ? `今日完成 ${todayPomodoros.value} 个番茄`
       : '专注工作，高效产出',
   },
+  {
+    id: 'accounting',
+    icon: '💰',
+    label: '记账',
+    color: '#ff9f0a',
+    bg: 'linear-gradient(135deg, #ff9f0a, #ffb340)',
+    summary: '记录开销，管理预算',
+  },
 ])
 </script>
 

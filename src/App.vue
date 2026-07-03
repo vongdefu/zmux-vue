@@ -6,6 +6,7 @@ import ProfileView from './components/ProfileView.vue'
 import ScheduleView from './components/ScheduleView.vue'
 import HabitView from './components/HabitView.vue'
 import PomodoroView from './components/PomodoroView.vue'
+import AccountingView from './components/AccountingView.vue'
 import PlayerDock from './components/PlayerDock.vue'
 import TabBar from './components/TabBar.vue'
 import { usePlayerStore } from './stores/playerStore'
@@ -13,7 +14,7 @@ import { usePlayerStore } from './stores/playerStore'
 const store = usePlayerStore()
 const currentView = ref('home')
 const tabBarVisible = computed(() => currentView.value !== 'profile')
-const playerViews = ['music', 'profile']
+const playerViews = ['music', 'profile', 'accounting']
 const showMiniPlayer = computed(() => playerViews.includes(currentView.value))
 
 // 离开音乐/个人页时自动关闭全屏播放器
@@ -32,6 +33,7 @@ watch(currentView, (v) => {
         <ScheduleView v-if="currentView === 'schedule'" @back="currentView = 'home'" />
         <HabitView     v-if="currentView === 'habit'"    @back="currentView = 'home'" />
         <PomodoroView v-if="currentView === 'pomodoro'" @back="currentView = 'home'" />
+        <AccountingView v-if="currentView === 'accounting'" @back="currentView = 'home'" />
         <ProfileView  v-if="currentView === 'profile'"  :store="store" @back="currentView = 'music'" />
 
         <PlayerDock :store="store" :tabBarVisible="tabBarVisible" :showMiniPlayer="showMiniPlayer" />
