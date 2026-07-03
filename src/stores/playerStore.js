@@ -1,7 +1,7 @@
 import { computed, reactive } from 'vue';
 import { fetchTrackDetails, searchSource } from '../services/musicApi';
 import { createLibrarySnapshot, deserializeTrack, loadLibrary, saveLibrary } from '../services/libraryStorage';
-import { fetchPlaylistTracks, fetchDiscoverPlaylists } from '../services/recommendedPlaylists';
+import { fetchPlaylistTracks, fetchDiscoverPlaylists, refreshPlaylists } from '../services/recommendedPlaylists';
 import { parseLrc } from '../utils/lyrics';
 
 const persisted = loadLibrary();
@@ -493,9 +493,9 @@ async function fetchRecommendedPlaylists() {
 }
 
 async function refreshRecommendedPlaylists() {
-  state.recommendedPlaylists = [];
-  await fetchRecommendedPlaylists();
-  if (state.recommendedPlaylists.length) {
+  const list = await refreshPlaylists();
+  if (list.length) {
+    state.recommendedPlaylists = list;
     showToast('歌单已刷新');
   }
 }

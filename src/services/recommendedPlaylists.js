@@ -1,9 +1,6 @@
 import { normalizeTrack } from './musicApi';
 
-const API_LIMIT = 15;
-const API_PATH = `/api/personalized/playlist?limit=${API_LIMIT}`;
-const API_URL = `https://music.163.com${API_PATH}`;
-
+const PAGE_SIZE = 10;
 const FALLBACK_PLAYLISTS = [
   { id: '3778678', name: '云音乐热歌榜', cover: null },
   { id: '3779629', name: '云音乐新歌榜', cover: null },
@@ -21,78 +18,78 @@ function getIdFromUrl(url) {
   return match ? match[1] : '';
 }
 
-/**
- * 解析个性化推荐 API 的 JSON 响应，提取歌单列表。
- */
-function parsePlaylistResponse(data) {
-  if (!data || data.code !== 200 || !Array.isArray(data.result)) {
-    throw new Error('API 返回数据格式异常');
+/** Fisher-Yates 洗牌 */
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
   }
-
-  const playlists = data.result.map((item) => ({
-    id: String(item.id),
-    name: item.name || '',
-    cover: item.picUrl || null,
-  }));
-
-  if (!playlists.length) {
-    throw new Error('API 未返回任何歌单');
-  }
-
-  return playlists;
+  return a;
 }
 
-/**
- * 通过指定 URL 请求歌单 API 并解析。
- */
-async function tryFetchPlaylists(fetchUrl) {
-  const response = await fetch(fetchUrl);
-  if (!response.ok) {
-    throw new Error(`HTTP ${response.status}`);
-  }
-  const data = await response.json();
-  return parsePlaylistResponse(data);
-}
+// 缓存：预加载的全量歌单池
+let playlistPool = null;
 
 /**
- * 获取推荐歌单列表。
- *
- * 三层降级策略：
- * 1. Vite dev proxy（yarn dev 时可用）
- * 2. 公共 CORS 代理（GitHub Pages 等静态托管环境）
- * 3. 内置静态歌单列表（兜底）
+ * 加载全量歌单池（dev 模式走代理，生产环境读本地 JSON）。
  */
-export async function fetchDiscoverPlaylists() {
-  // 1) Vite 开发代理（仅 dev 模式可用）
+async function loadPool() {
   if (import.meta.env.DEV) {
-    try {
-      return await tryFetchPlaylists(`/api/proxy/netease${API_PATH}`);
-    } catch (e) {
-      console.warn('Vite dev proxy 失败，尝试 CORS 代理...', e.message);
+    // dev: 通过 Vite 代理获取实时歌单
+    const resp = await fetch(`/api/proxy/netease/api/personalized/playlist?limit=100`);
+    const data = await resp.json();
+    if (data.code === 200 && Array.isArray(data.result)) {
+      return data.result.map((item) => ({
+        id: String(item.id),
+        name: item.name || '',
+        cover: item.picUrl || null,
+      }));
     }
   }
 
-  // 2) CORS 代理（多源尝试）
-  const corsProxies = [
-    (url) => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-    (url) => `https://cors-anywhere.herokuapp.com/${url}`,
-  ]
-  for (const buildUrl of corsProxies) {
-    try {
-      return await tryFetchPlaylists(buildUrl(API_URL));
-    } catch (e) {
-      console.warn(`CORS 代理失败:`, e.message);
+  // 生产环境：读本地预生成的 JSON
+  try {
+    const resp = await fetch('/playlists.json');
+    if (resp.ok) {
+      const list = await resp.json();
+      if (Array.isArray(list) && list.length) return list;
     }
+  } catch (e) {
+    console.warn('加载本地歌单 JSON 失败:', e.message);
   }
 
-  // 3) 静态兜底歌单
-  console.info('所有远程请求失败，使用内置歌单');
+  // 兜底
   return FALLBACK_PLAYLISTS;
 }
 
 /**
+ * 获取推荐歌单（首次调用时加载全量池，随机返回 PAGE_SIZE 个）。
+ */
+export async function fetchDiscoverPlaylists() {
+  if (!playlistPool) {
+    try {
+      playlistPool = await loadPool();
+    } catch (e) {
+      console.warn('加载歌单池失败，使用内置歌单:', e.message);
+      playlistPool = FALLBACK_PLAYLISTS;
+    }
+  }
+  return shuffle(playlistPool).slice(0, PAGE_SIZE);
+}
+
+/**
+ * 换一换：重新从池中随机抽 PAGE_SIZE 个，不重新加载池。
+ */
+export async function refreshPlaylists() {
+  if (!playlistPool) {
+    return fetchDiscoverPlaylists();
+  }
+  return shuffle(playlistPool).slice(0, PAGE_SIZE);
+}
+
+/**
  * 通过 Meting API 获取歌单内的歌曲列表。
- * 返回的歌曲格式与音乐搜索 API 完全一致，可被 TrackList 和 PlayerDock 直接使用。
  */
 export async function fetchPlaylistTracks(playlistId) {
   const apiUrl = `https://api.qijieya.cn/meting/?type=playlist&id=${encodeURIComponent(playlistId)}`;
