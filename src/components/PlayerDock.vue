@@ -195,7 +195,7 @@ function onEnded() {
         <IconButton label="下一首" @click.stop="props.store.nextTrack">››</IconButton>
         <IconButton label="收藏" :active="props.store.isFavorite(state.currentTrack)" @click.stop="props.store.toggleFavorite()">{{ props.store.isFavorite(state.currentTrack) ? '♥' : '♡' }}</IconButton>
         <div class="mini-volume-wrap">
-          <button class="mini-volume-btn" @click.stop="showVolume = !showVolume">🔊</button>
+          <IconButton label="音量" @click.stop="showVolume = !showVolume">🔊</IconButton>
           <Transition name="vol-pop">
             <input v-if="showVolume" class="mini-volume" type="range" min="0" max="1" step="0.01" :value="state.volume" @input="setVolume" @click.stop />
           </Transition>
@@ -236,50 +236,28 @@ function onEnded() {
           </div>
         </section>
 
-        <section class="compact-player">
-          <div class="progress" @click="seek">
-            <span class="progress-fill" :style="{ width: `${progress}%` }" />
-          </div>
-          <div class="time-row">
-            <span>{{ formatTime(state.currentTime) }}</span>
-            <span>{{ formatTime(state.duration) }}</span>
-          </div>
+        <div class="player-time-row">
+          <span>{{ formatTime(state.currentTime) }}</span>
+          <span>{{ formatTime(state.duration) }}</span>
+        </div>
 
-          <div class="controls">
-            <IconButton label="播放模式" @click="cyclePlayMode">{{
-              playModeIcon
-            }}</IconButton>
-            <IconButton label="上一首" @click="props.store.previousTrack"
-              >‹‹</IconButton
-            >
-            <IconButton label="播放或暂停" tone="primary" @click="togglePlay">{{
-              state.isPlaying ? "Ⅱ" : "▶"
-            }}</IconButton>
-            <IconButton label="下一首" @click="props.store.nextTrack"
-              >››</IconButton
-            >
-            <IconButton
-              label="收藏"
-              :active="props.store.isFavorite(state.currentTrack)"
-              @click="props.store.toggleFavorite()"
-            >
-              {{ props.store.isFavorite(state.currentTrack) ? "♥" : "♡" }}
-            </IconButton>
-          </div>
+        <div class="player-progress" @click="seek">
+          <span class="player-progress-fill" :style="{ width: `${progress}%` }" />
+        </div>
 
-          <label class="volume">
-            <span></span>
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.01"
-              :value="state.volume"
-              @input="setVolume"
-            />
-            <span></span>
-          </label>
-        </section>
+        <div class="player-controls">
+          <IconButton label="播放模式" @click="cyclePlayMode">{{ playModeIcon }}</IconButton>
+          <IconButton label="上一首" @click="props.store.previousTrack">‹‹</IconButton>
+          <IconButton label="播放或暂停" tone="primary" @click="togglePlay">{{ state.isPlaying ? 'Ⅱ' : '▶' }}</IconButton>
+          <IconButton label="下一首" @click="props.store.nextTrack">››</IconButton>
+          <IconButton label="收藏" :active="props.store.isFavorite(state.currentTrack)" @click="props.store.toggleFavorite()">{{ props.store.isFavorite(state.currentTrack) ? '♥' : '♡' }}</IconButton>
+          <div class="mini-volume-wrap">
+            <IconButton label="音量" @click.stop="showVolume = !showVolume">🔊</IconButton>
+            <Transition name="vol-pop">
+              <input v-if="showVolume" class="mini-volume" type="range" min="0" max="1" step="0.01" :value="state.volume" @input="setVolume" @click.stop />
+            </Transition>
+          </div>
+        </div>
       </div>
     </section>
   </Transition>
@@ -383,15 +361,6 @@ function onEnded() {
   align-items: center;
 }
 
-.mini-volume-btn {
-  width: 28px; height: 28px;
-  border: 0; border-radius: 999px;
-  background: transparent;
-  font-size: 14px;
-  cursor: pointer;
-  display: grid; place-items: center;
-}
-
 .mini-volume {
   position: absolute;
   bottom: 100%;
@@ -443,26 +412,19 @@ function onEnded() {
   display: flex;
   flex-direction: column;
   padding: 20px 22px;
-  background:
-    radial-gradient(circle at 30% 0%, rgba(236, 65, 65, 0.18), transparent 34%),
-    linear-gradient(180deg, #fbfbfd, #f5f5f7);
+  background: var(--bg-canvas);
 }
 
 .collapse-pill {
   align-self: center;
-  min-width: 10%;
-  margin-top: 50px;
-  height: 10px;
+  width: 40px;
+  height: 5px;
+  margin-top: env(safe-area-inset-top, 20px);
   border: 0;
   border-radius: 999px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  background: rgba(118, 118, 128, 0.12);
-  /* color: var(--text-secondary); */
-
+  background: rgba(118, 118, 128, 0.2);
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 .player-body {
@@ -471,107 +433,47 @@ function onEnded() {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
-  padding-top: 14px;
+  gap: 10px;
+  padding-top: 18px;
+  overflow-y: auto;
 }
 
 .song-title-block {
   width: 100%;
   text-align: center;
+  flex-shrink: 0;
 }
 
 .song-title-block h2 {
   margin: 0;
   font-size: 22px;
+  font-weight: 800;
   line-height: 1.16;
+  color: var(--text-primary);
 }
 
 .song-title-block p {
-  margin: 5px 0 0;
-  color: var(--accent);
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.compact-player {
-  width: 100%;
-  display: grid;
-  gap: 10px;
-}
-
-.progress {
-  width: 100%;
-  height: 7px;
-  border-radius: 999px;
-  background: rgba(60, 60, 67, 0.14);
-  overflow: hidden;
-  cursor: pointer;
-}
-
-.progress-fill {
-  display: block;
-  height: 100%;
-  border-radius: inherit;
-  background: var(--accent);
-}
-
-.time-row {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  margin-top: -10px;
-  color: var(--text-tertiary);
-  font-size: 12px;
-}
-
-.controls {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.controls :deep(.tone-primary) {
-  width: 54px;
-  height: 54px;
-  font-size: 22px;
-}
-
-.volume {
-  width: 100%;
-  display: grid;
-  grid-template-columns: auto 1fr;
-  /* gap: 12px; */
-  align-items: center;
+  margin: 4px 0 0;
   color: var(--text-secondary);
-  font-size: 13px;
-}
-
-.volume input {
-  width: 100%;
-  accent-color: var(--accent);
+  font-size: 15px;
+  font-weight: 600;
 }
 
 .lyrics-card {
   width: 100%;
-  min-height: 210px;
   flex: 1;
-  border-radius: 22px;
-  padding: 16px;
-  background: rgba(255, 255, 255, 0.7);
-}
-
-.lyrics-card h3 {
-  margin: 0 0 8px;
-  font-size: 16px;
+  min-height: 120px;
+  border-radius: 16px;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.5);
 }
 
 .lyrics-scroll {
-  height: 90%;
+  height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
   text-align: center;
-  color: var(--text-tertiary);
+  color: var(--text-secondary);
   mask-image: linear-gradient(transparent, black 16%, black 84%, transparent);
 }
 
@@ -579,9 +481,7 @@ function onEnded() {
   margin: 10px 0;
   font-size: 16px;
   line-height: 1.45;
-  transition:
-    color 0.2s ease,
-    transform 0.2s ease;
+  transition: color 0.2s ease, transform 0.2s ease;
 }
 
 .lyrics-scroll .active {
@@ -590,20 +490,62 @@ function onEnded() {
   transform: scale(1.04);
 }
 
-.muted {
+.muted { color: var(--text-secondary); }
+
+.player-time-row {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
   color: var(--text-secondary);
+  font-size: 12px;
+  flex-shrink: 0;
 }
 
-.sheet-enter-active,
+.player-progress {
+  width: 100%;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(60, 60, 67, 0.14);
+  overflow: hidden;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.player-progress-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--text-primary);
+  transition: width 0.1s linear;
+}
+
+.player-controls {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  padding-bottom: env(safe-area-inset-bottom, 8px);
+}
+
+.player-controls :deep(.tone-primary) {
+  width: 52px; height: 52px;
+  font-size: 20px;
+}
+
+.sheet-enter-active {
+  transition: transform 0.32s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.24s ease;
+}
 .sheet-leave-active {
-  transition:
-    transform 0.28s ease,
-    opacity 0.28s ease;
+  transition: transform 0.24s cubic-bezier(0.32, 0.72, 0, 1), opacity 0.18s ease;
 }
-
-.sheet-enter-from,
+.sheet-enter-from {
+  transform: translateY(100%);
+  opacity: 0;
+}
 .sheet-leave-to {
   transform: translateY(100%);
-  opacity: 0.4;
+  opacity: 0;
 }
 </style>
