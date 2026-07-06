@@ -1,6 +1,6 @@
 import { normalizeTrack } from './musicApi';
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 9;
 const FALLBACK_PLAYLISTS = [
   { id: '3778678', name: '云音乐热歌榜', cover: null },
   { id: '3779629', name: '云音乐新歌榜', cover: null },

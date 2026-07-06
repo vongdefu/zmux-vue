@@ -81,39 +81,28 @@ function backToBrowse() {
   <div class="music-view">
     <!-- 顶栏：搜索框 + 人像 -->
     <header class="music-top-bar">
-      <button
-        class="music-home-btn"
-        @click="emit('navigate', 'home')"
-        title="主页"
-      >
-        ←
-      </button>
-      <form class="music-search-box" @submit.prevent="doSearch">
-        <span class="music-search-icon">⌕</span>
-        <input
-          v-model="store.state.searchKeyword"
-          type="search"
-          placeholder="搜索歌名、歌手"
-          @focus="onSearchFocus"
-          @blur="onSearchBlur"
-        />
-        <button
-          v-if="store.state.searchKeyword"
-          type="button"
-          class="music-search-clear"
-          @mousedown.prevent="store.state.searchKeyword = ''; showSearch = false"
-        >
-          ×
-        </button>
-      </form>
-      <button
-        class="music-avatar"
-        @click="emit('navigate', 'profile')"
-        title="我的"
-      >
-        👤
-      </button>
+      <button class="music-back" @click="emit('navigate', 'home')" title="主页">←</button>
+      <h1>美好音乐</h1>
+      <button class="music-profile-btn" @click="emit('navigate', 'profile')" title="我的">👤</button>
     </header>
+
+    <!-- 搜索栏 -->
+    <form class="music-search-bar" @submit.prevent="doSearch">
+      <span class="music-search-icon">⌕</span>
+      <input
+        v-model="store.state.searchKeyword"
+        type="search"
+        placeholder="搜索歌名、歌手"
+        @focus="onSearchFocus"
+        @blur="onSearchBlur"
+      />
+      <button
+        v-if="store.state.searchKeyword"
+        type="button"
+        class="music-search-clear"
+        @mousedown.prevent="store.state.searchKeyword = ''; showSearch = false"
+      >×</button>
+    </form>
 
     <div class="music-content">
       <!-- ========== 搜索界面 ========== -->
@@ -253,22 +242,58 @@ function backToBrowse() {
   flex-direction: column;
 }
 
-/* ---- 顶栏 ---- */
+/* ---- 顶栏（与日程/番茄/习惯统一） ---- */
 .music-top-bar {
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 14px;
   padding: 14px 18px 10px;
 }
 
-.music-search-box {
+.music-top-bar h1 {
   flex: 1;
-  min-width: 0;
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.music-back {
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(118, 118, 128, 0.1);
+  color: var(--text-secondary);
+  font-size: 16px;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+}
+
+.music-profile-btn {
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--accent);
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+}
+
+/* ---- 搜索栏（移至内容区） ---- */
+.music-search-bar {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   gap: 8px;
   height: 40px;
+  margin: 0 18px;
   padding: 0 4px 0 12px;
   border-radius: 14px;
   background: rgba(118, 118, 128, 0.1);
@@ -280,7 +305,7 @@ function backToBrowse() {
   flex-shrink: 0;
 }
 
-.music-search-box input {
+.music-search-bar input {
   flex: 1;
   min-width: 0;
   border: 0;
@@ -304,39 +329,11 @@ function backToBrowse() {
   place-items: center;
 }
 
-.music-home-btn {
-  width: 32px;
-  height: 32px;
-  border: 0;
-  border-radius: 999px;
-  background: rgba(118, 118, 128, 0.1);
-  color: var(--text-secondary);
-  font-size: 16px;
-  cursor: pointer;
-  flex-shrink: 0;
-  display: grid;
-  place-items: center;
-}
-
-.music-avatar {
-  width: 36px;
-  height: 36px;
-  border: 0;
-  border-radius: 999px;
-  background: linear-gradient(135deg, #ec4141, #f06c6c);
-  color: white;
-  font-size: 18px;
-  cursor: pointer;
-  flex-shrink: 0;
-  display: grid;
-  place-items: center;
-}
-
 /* ---- 滚动内容 ---- */
 .music-content {
   flex: 1;
   overflow-y: auto;
-  padding: 0 18px 190px;
+  padding: 12px 18px 190px;
   display: flex;
   flex-direction: column;
   gap: 12px;
