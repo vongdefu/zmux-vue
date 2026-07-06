@@ -2,6 +2,7 @@
 import { computed, onMounted, ref } from "vue"
 import { sourceMeta } from "../services/musicApi"
 import TrackList from "./TrackList.vue"
+import PlaylistsView from "./PlaylistsView.vue"
 
 const props = defineProps({
   store: {
@@ -17,6 +18,22 @@ const searchFocused = ref(false)
 const selectedPlaylistId = ref(null)
 const loadingTracks = ref(false)
 const loadingMore = ref(false)
+
+/* ===== 标签页 ===== */
+const activeTab = ref('recommend')
+const myTabs = [
+  { id: 'recommend', label: '推荐歌单' },
+  { id: 'playlists', label: '我的歌单' },
+  { id: 'favorites', label: '我的收藏' },
+  { id: 'history', label: '历史记录' },
+]
+
+const favoriteCount = computed(() => props.store.state.favorites.length)
+const historyCount = computed(() => props.store.state.playHistory.length)
+
+function switchToMyTab() {
+  activeTab.value = 'playlists'
+}
 
 const selectedPlaylist = computed(
   () =>
@@ -83,7 +100,7 @@ function backToBrowse() {
     <header class="music-top-bar">
       <button class="music-back" @click="emit('navigate', 'home')" title="主页">←</button>
       <h1>美好音乐</h1>
-      <button class="music-profile-btn" @click="emit('navigate', 'profile')" title="我的">👤</button>
+      <button class="music-profile-btn" @click="switchToMyTab" title="我的">👤</button>
     </header>
 
     <!-- 搜索栏 -->
@@ -103,6 +120,21 @@ function backToBrowse() {
         @mousedown.prevent="store.state.searchKeyword = ''; showSearch = false"
       >×</button>
     </form>
+
+    <!-- 标签页 -->
+    <nav class="music-tabs">
+      <button
+        v-for="tab in myTabs"
+        :key="tab.id"
+        class="music-tab"
+        :class="{ active: activeTab === tab.id }"
+        @click="activeTab = tab.id"
+      >
+        {{ tab.label }}
+        <span v-if="tab.id === 'favorites'" class="tab-count">{{ favoriteCount }}</span>
+        <span v-else-if="tab.id === 'history'" class="tab-count">{{ historyCount }}</span>
+      </button>
+    </nav>
 
     <div class="music-content">
       <!-- ========== 搜索界面 ========== -->
@@ -131,9 +163,7 @@ function backToBrowse() {
             v-if="store.orderedResults.value.length"
             class="plain-button"
             @click="store.loadMore"
-          >
-            更多
-          </button>
+          >更多</button>
         </div>
 
         <TrackList
@@ -147,88 +177,94 @@ function backToBrowse() {
         />
       </template>
 
-      <!-- ========== 推荐歌单：浏览 ========== -->
-      <template v-else-if="!selectedPlaylistId">
-        <div class="section-title">
-          <div>
-            <h2>推荐歌单</h2>
-            <p v-if="store.state.recommendedLoading">加载中...</p>
-          </div>
-          <button
-            class="plain-button"
-            :disabled="store.state.recommendedLoading"
-            @click="store.refreshRecommendedPlaylists()"
-          >
-            换一换
-          </button>
-        </div>
-
-        <div
-          v-if="
-            store.state.recommendedLoading &&
-            !store.state.recommendedPlaylists.length
-          "
-          class="empty-state"
-        >
-          正在发现好歌单...
-        </div>
-
-        <div v-else class="recommend-grid">
-          <button
-            v-for="playlist in store.state.recommendedPlaylists"
-            :key="playlist.id"
-            class="recommend-card"
-            @click="onPlaylistClick(playlist.id)"
-          >
-            <div class="recommend-card-cover">
-              <img
-                v-if="playlist.cover"
-                :src="playlist.cover"
-                :alt="playlist.name"
-              />
-              <span v-else>{{ playlist.name.slice(0, 2) }}</span>
+      <!-- ========== 推荐歌单 Tab ========== -->
+      <template v-else-if="activeTab === 'recommend'">
+        <!-- 浏览歌单列表 -->
+        <template v-if="!selectedPlaylistId">
+          <div class="section-title">
+            <div>
+              <h2>推荐歌单</h2>
+              <p v-if="store.state.recommendedLoading">加载中...</p>
             </div>
-            <strong :title="playlist.name">{{ playlist.name }}</strong>
-          </button>
-        </div>
+            <button class="plain-button" :disabled="store.state.recommendedLoading" @click="store.refreshRecommendedPlaylists()">换一换</button>
+          </div>
+
+          <div v-if="store.state.recommendedLoading && !store.state.recommendedPlaylists.length" class="empty-state">正在发现好歌单...</div>
+
+          <div v-else class="recommend-grid">
+            <button
+              v-for="playlist in store.state.recommendedPlaylists"
+              :key="playlist.id"
+              class="recommend-card"
+              @click="onPlaylistClick(playlist.id)"
+            >
+              <div class="recommend-card-cover">
+                <img v-if="playlist.cover" :src="playlist.cover" :alt="playlist.name" />
+                <span v-else>{{ playlist.name.slice(0, 2) }}</span>
+              </div>
+              <strong :title="playlist.name">{{ playlist.name }}</strong>
+            </button>
+          </div>
+        </template>
+
+        <!-- 歌单详情 -->
+        <template v-else>
+          <button class="back-button" @click="backToBrowse">← 推荐歌单</button>
+          <div class="playlist-detail-header">
+            <h2 class="playlist-detail-name">{{ selectedPlaylist?.name || "" }}</h2>
+            <button class="fave-playlist-btn" @click="store.saveRecommendedPlaylist(selectedPlaylistId)">收藏歌单</button>
+          </div>
+
+          <div v-if="loadingTracks" class="empty-state">正在加载歌曲…</div>
+          <template v-else>
+            <TrackList
+              :tracks="selectedPlaylist?.tracks || []"
+              :current-track="store.state.currentTrack"
+              :is-favorite="store.isFavorite"
+              empty-text="歌单暂无歌曲"
+              :removable="false"
+              @play="(_, index) => store.playFromList('recommended', index, selectedPlaylistId)"
+              @favorite="store.toggleFavorite"
+            />
+            <button v-if="hasMore" class="load-more-btn" :disabled="loadingMore" @click="loadMore">
+              {{ loadingMore ? '加载中...' : `加载更多 (${selectedPlaylist?.tracks.length || 0}/${selectedPlaylist?._tracksBuffer?.length || 0})` }}
+            </button>
+          </template>
+        </template>
       </template>
 
-      <!-- ========== 推荐歌单：详情 ========== -->
-      <template v-else>
-        <button class="back-button" @click="backToBrowse">← 推荐歌单</button>
-        <div class="playlist-detail-header">
-          <h2 class="playlist-detail-name">{{ selectedPlaylist?.name || "" }}</h2>
-          <button
-            class="fave-playlist-btn"
-            @click="store.saveRecommendedPlaylist(selectedPlaylistId)"
-          >收藏歌单</button>
-        </div>
+      <!-- ========== 我的歌单 Tab ========== -->
+      <template v-else-if="activeTab === 'playlists'">
+        <PlaylistsView :store="store" />
+      </template>
 
-        <div v-if="loadingTracks" class="empty-state">
-          正在加载歌曲…
+      <!-- ========== 我的收藏 Tab ========== -->
+      <template v-else-if="activeTab === 'favorites'">
+        <TrackList
+          :tracks="store.state.favorites"
+          :current-track="store.state.currentTrack"
+          :is-favorite="store.isFavorite"
+          empty-text="收藏喜欢的歌曲，它们会出现在这里"
+          :removable="false"
+          @play="(_, index) => store.playFromList('favorites', index)"
+          @favorite="store.toggleFavorite"
+        />
+      </template>
+
+      <!-- ========== 历史记录 Tab ========== -->
+      <template v-else-if="activeTab === 'history'">
+        <div class="history-actions">
+          <button v-if="store.state.playHistory.length" class="clear-btn" @click="store.clearPlayHistory()">清空历史记录</button>
         </div>
-        <template v-else>
-          <TrackList
-            :tracks="selectedPlaylist?.tracks || []"
-            :current-track="store.state.currentTrack"
-            :is-favorite="store.isFavorite"
-            empty-text="歌单暂无歌曲"
-            :removable="false"
-            @play="
-              (_, index) =>
-                store.playFromList('recommended', index, selectedPlaylistId)
-            "
-            @favorite="store.toggleFavorite"
-          />
-          <button
-            v-if="hasMore"
-            class="load-more-btn"
-            :disabled="loadingMore"
-            @click="loadMore"
-          >
-            {{ loadingMore ? '加载中...' : `加载更多 (${selectedPlaylist?.tracks.length || 0}/${selectedPlaylist?._tracksBuffer?.length || 0})` }}
-          </button>
-        </template>
+        <TrackList
+          :tracks="store.state.playHistory"
+          :current-track="store.state.currentTrack"
+          :is-favorite="store.isFavorite"
+          empty-text="播放过的歌曲会按时间出现在这里"
+          :removable="false"
+          @play="(_, index) => store.playTrack(store.state.playHistory[index])"
+          @favorite="store.toggleFavorite"
+        />
       </template>
     </div>
   </div>
@@ -327,6 +363,72 @@ function backToBrowse() {
   flex-shrink: 0;
   display: grid;
   place-items: center;
+}
+
+/* ---- 标签页 ---- */
+.music-tabs {
+  flex-shrink: 0;
+  display: flex;
+  gap: 0;
+  padding: 0 18px;
+  border-bottom: 1px solid rgba(118, 118, 128, 0.14);
+  margin-top: 8px;
+}
+
+.music-tab {
+  flex: 1;
+  border: 0;
+  padding: 10px 4px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.15s;
+}
+
+.music-tab.active {
+  color: var(--accent);
+}
+
+.music-tab.active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--accent);
+}
+
+.tab-count {
+  display: inline-block;
+  margin-left: 3px;
+  padding: 1px 5px;
+  border-radius: 999px;
+  background: rgba(236, 65, 65, 0.12);
+  font-size: 10px;
+  font-weight: 700;
+  vertical-align: top;
+}
+
+.history-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 4px;
+}
+
+.clear-btn {
+  border: 0;
+  border-radius: 8px;
+  padding: 5px 12px;
+  background: rgba(236, 65, 65, 0.08);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
 }
 
 /* ---- 滚动内容 ---- */
