@@ -174,35 +174,14 @@ function onEnded() {
       <TrackArtwork :track="state.currentTrack" size="small" />
     </div>
 
-    <div class="mini-info">
-      <div class="mini-song-row">
-        <span ref="songLabelRef" class="mini-song-measure" aria-hidden="true">{{ labelText }}</span>
-        <span v-if="needsScroll" class="mini-song-track">
-          <span class="mini-song-item">{{ labelText }}</span>
-          <span class="mini-song-gap">•</span>
-          <span class="mini-song-item">{{ labelText }}</span>
-        </span>
-        <span v-else class="mini-song-label">{{ labelText }}</span>
-      </div>
+    <div class="mini-info" @click="state.playerOpen = true">
+      <span class="mini-title">{{ state.currentTrack?.title || '未在播放' }}</span>
+      <span class="mini-artist">{{ state.currentTrack?.artist || '等待播放' }}</span>
+    </div>
 
-      <div class="mini-controls-row">
-        <button
-          class="mini-ctrl"
-          :title="{ list: '列表循环', single: '单曲循环', shuffle: '随机播放' }[state.playMode]"
-          @click="cyclePlayMode"
-        >{{ playModeIcon }}</button>
-        <button class="mini-ctrl" title="上一首" @click="props.store.previousTrack">‹‹</button>
-        <IconButton label="播放或暂停" tone="primary" @click.stop="togglePlay">
-          {{ state.isPlaying ? "Ⅱ" : "▶" }}
-        </IconButton>
-        <button class="mini-ctrl" title="下一首" @click="props.store.nextTrack">››</button>
-        <button
-          class="mini-ctrl"
-          :class="{ active: props.store.isFavorite(state.currentTrack) }"
-          :title="props.store.isFavorite(state.currentTrack) ? '取消收藏' : '收藏'"
-          @click="props.store.toggleFavorite()"
-        >{{ props.store.isFavorite(state.currentTrack) ? "♥" : "♡" }}</button>
-      </div>
+    <div class="mini-controls-row">
+      <button class="mini-play" @click.stop="togglePlay">{{ state.isPlaying ? 'Ⅱ' : '▶' }}</button>
+      <button class="mini-next" title="下一首" @click.stop="props.store.nextTrack">›</button>
     </div>
   </div>
 
@@ -286,35 +265,31 @@ function onEnded() {
 <style scoped>
 .mini-player {
   position: absolute;
-  left: 16px;
-  right: 16px;
+  left: 12px;
+  right: 12px;
   bottom: 10px;
   z-index: 20;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  height: 56px;
   transition: bottom 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
-  border: 1px solid rgba(255, 255, 255, 0.7);
-  border-radius: 18px;
-  padding: 8px 10px;
-  background: rgba(255, 255, 255, 0.86);
+  border-radius: 16px;
+  padding: 0 10px;
+  background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(22px);
-  color: var(--text-primary);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.16);
-  text-align: left;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 .mini-cover {
   cursor: pointer;
   flex-shrink: 0;
-  border-radius: 10px;
+  border-radius: 8px;
   overflow: hidden;
   transition: transform 0.16s ease;
 }
-
-.mini-cover:active {
-  transform: scale(0.94);
-}
+.mini-cover:active { transform: scale(0.94); }
 
 .mini-info {
   flex: 1;
@@ -322,91 +297,57 @@ function onEnded() {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 5px;
+  gap: 2px;
+  cursor: pointer;
 }
 
-.mini-song-row {
-  position: relative;
-  overflow: hidden;
-  white-space: nowrap;
-  text-align: center;
-  mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
-}
-
-.mini-song-measure {
-  position: absolute;
-  visibility: hidden;
-  white-space: nowrap;
+.mini-title {
   font-size: 14px;
   font-weight: 700;
-  pointer-events: none;
-}
-
-.mini-song-label {
-  display: block;
+  color: var(--text-primary);
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  text-align: center;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text-primary);
 }
 
-.mini-song-track {
-  display: inline-block;
+.mini-artist {
+  font-size: 12px;
+  color: var(--text-secondary);
+  overflow: hidden;
   white-space: nowrap;
-  animation: mini-marquee 12s linear infinite;
-}
-
-.mini-song-item {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text-primary);
-}
-
-.mini-song-gap {
-  padding: 0 20px;
-  color: var(--text-tertiary);
-}
-
-@keyframes mini-marquee {
-  0% { transform: translateX(8px); }
-  100% { transform: translateX(calc(-50% + 8px)); }
+  text-overflow: ellipsis;
 }
 
 .mini-controls-row {
   display: flex;
   align-items: center;
-  gap: 4px;
-  justify-content: center;
+  gap: 2px;
+  flex-shrink: 0;
 }
 
-.mini-ctrl {
-  width: 30px;
-  height: 30px;
-  border: 0;
-  border-radius: 999px;
-  display: grid;
-  place-items: center;
-  background: transparent;
-  color: var(--text-secondary);
-  font-size: 15px;
+.mini-play {
+  width: 36px; height: 36px;
+  border: 0; border-radius: 999px;
+  background: var(--text-primary);
+  color: white;
+  font-size: 14px; font-weight: 800;
   cursor: pointer;
-  transition: background 0.16s ease, color 0.16s ease;
+  display: grid; place-items: center;
+  transition: transform 0.12s ease;
 }
+.mini-play:active { transform: scale(0.92); }
 
-.mini-ctrl:active {
-  background: rgba(118, 118, 128, 0.14);
+.mini-next {
+  width: 36px; height: 36px;
+  border: 0; border-radius: 999px;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 20px; font-weight: 700;
+  cursor: pointer;
+  display: grid; place-items: center;
+  transition: opacity 0.12s ease;
 }
-
-.mini-ctrl.active {
-  color: var(--accent);
-}
-
-.mini-controls-row :deep(.icon-button) {
-  width: 34px;
+.mini-next:active { opacity: 0.5; }
   height: 34px;
   font-size: 14px;
 }
