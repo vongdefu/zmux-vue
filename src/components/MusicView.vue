@@ -118,7 +118,7 @@ function backToBrowse() {
     </form>
 
     <!-- 标签页 -->
-    <nav class="music-tabs">
+    <nav v-if="!showSearch" class="music-tabs">
       <button
         v-for="tab in myTabs"
         :key="tab.id"
