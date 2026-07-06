@@ -180,8 +180,15 @@ function onEnded() {
     </div>
 
     <div class="mini-controls-row">
+      <button class="mini-ctrl" title="上一首" @click.stop="props.store.previousTrack">‹</button>
       <button class="mini-play" @click.stop="togglePlay">{{ state.isPlaying ? 'Ⅱ' : '▶' }}</button>
-      <button class="mini-next" title="下一首" @click.stop="props.store.nextTrack">›</button>
+      <button class="mini-ctrl" title="下一首" @click.stop="props.store.nextTrack">›</button>
+      <button
+        class="mini-ctrl"
+        :class="{ active: props.store.isFavorite(state.currentTrack) }"
+        :title="props.store.isFavorite(state.currentTrack) ? '取消收藏' : '收藏'"
+        @click.stop="props.store.toggleFavorite()"
+      >{{ props.store.isFavorite(state.currentTrack) ? '♥' : '♡' }}</button>
     </div>
   </div>
 
@@ -321,9 +328,22 @@ function onEnded() {
 .mini-controls-row {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 0;
   flex-shrink: 0;
 }
+
+.mini-ctrl {
+  width: 32px; height: 32px;
+  border: 0; border-radius: 999px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 14px; font-weight: 700;
+  cursor: pointer;
+  display: grid; place-items: center;
+  transition: color 0.12s ease;
+}
+.mini-ctrl:active { opacity: 0.5; }
+.mini-ctrl.active { color: var(--accent); }
 
 .mini-play {
   width: 36px; height: 36px;
@@ -336,18 +356,6 @@ function onEnded() {
   transition: transform 0.12s ease;
 }
 .mini-play:active { transform: scale(0.92); }
-
-.mini-next {
-  width: 36px; height: 36px;
-  border: 0; border-radius: 999px;
-  background: transparent;
-  color: var(--text-primary);
-  font-size: 20px; font-weight: 700;
-  cursor: pointer;
-  display: grid; place-items: center;
-  transition: opacity 0.12s ease;
-}
-.mini-next:active { opacity: 0.5; }
 
 .player-sheet {
   position: absolute;
