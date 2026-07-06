@@ -188,7 +188,7 @@ function backToBrowse() {
               />
               <span v-else>{{ playlist.name.slice(0, 2) }}</span>
             </div>
-            <strong>{{ playlist.name }}</strong>
+            <strong :title="playlist.name">{{ playlist.name }}</strong>
           </button>
         </div>
       </template>
@@ -418,6 +418,8 @@ function backToBrowse() {
 }
 
 .recommend-card {
+  display: flex;
+  flex-direction: column;
   border: 0;
   border-radius: 14px;
   padding: 0;
@@ -435,6 +437,7 @@ function backToBrowse() {
 .recommend-card-cover {
   width: 100%;
   aspect-ratio: 1;
+  flex-shrink: 0;
   display: grid;
   place-items: center;
   background: linear-gradient(135deg, #ec4141, #f06c6c);
@@ -456,9 +459,11 @@ function backToBrowse() {
   line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  margin: 8px 10px 10px;
+  padding: 8px 10px;
+  min-height: calc(1.3em * 2 + 16px); /* 2 行文字 + 上下 padding */
   font-size: 13px;
   line-height: 1.3;
+  font-weight: 700;
   color: var(--text-primary);
 }
 
