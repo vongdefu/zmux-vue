@@ -24,6 +24,7 @@ const activeLineRef = ref(null)
 const lyricsRef = ref(null)
 const songLabelRef = ref(null)
 const needsScroll = ref(false)
+const showVolume = ref(false)
 
 const miniBottom = computed(() =>
   props.tabBarVisible ? '90px' : '10px',
@@ -176,20 +177,33 @@ function onEnded() {
 
     <div class="mini-right">
       <div class="mini-info" @click="state.playerOpen = true">
-        <span class="mini-title">{{ state.currentTrack?.title || '未在播放' }}</span>
-        <span class="mini-artist">{{ state.currentTrack?.artist || '等待播放' }}</span>
-      </div>
-
-      <div class="mini-progress" @click="seek">
-        <span class="mini-progress-fill" :style="{ width: `${progress}%` }" />
+        <div class="mini-song-wrap">
+          <span ref="songLabelRef" class="mini-song-measure" aria-hidden="true">{{ labelText }}</span>
+          <span v-if="needsScroll" class="mini-song-track">
+            <span class="mini-song-item">{{ labelText }}</span>
+            <span class="mini-song-gap">•</span>
+            <span class="mini-song-item">{{ labelText }}</span>
+          </span>
+          <span v-else class="mini-title">{{ labelText }}</span>
+        </div>
       </div>
 
       <div class="mini-controls">
+        <IconButton label="播放模式" @click.stop="cyclePlayMode">{{ playModeIcon }}</IconButton>
         <IconButton label="上一首" @click.stop="props.store.previousTrack">‹‹</IconButton>
         <IconButton label="播放或暂停" tone="primary" @click.stop="togglePlay">{{ state.isPlaying ? 'Ⅱ' : '▶' }}</IconButton>
         <IconButton label="下一首" @click.stop="props.store.nextTrack">››</IconButton>
         <IconButton label="收藏" :active="props.store.isFavorite(state.currentTrack)" @click.stop="props.store.toggleFavorite()">{{ props.store.isFavorite(state.currentTrack) ? '♥' : '♡' }}</IconButton>
-        <input class="mini-volume" type="range" min="0" max="1" step="0.01" :value="state.volume" @input="setVolume" @click.stop />
+        <div class="mini-volume-wrap">
+          <button class="mini-volume-btn" @click.stop="showVolume = !showVolume">🔊</button>
+          <Transition name="vol-pop">
+            <input v-if="showVolume" class="mini-volume" type="range" min="0" max="1" step="0.01" :value="state.volume" @input="setVolume" @click.stop />
+          </Transition>
+        </div>
+      </div>
+
+      <div class="mini-progress" @click="seek">
+        <span class="mini-progress-fill" :style="{ width: `${progress}%` }" />
       </div>
     </div>
   </div>
@@ -311,27 +325,99 @@ function onEnded() {
 
 .mini-info {
   min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
   cursor: pointer;
 }
 
-.mini-title {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text-primary);
+.mini-song-wrap {
+  position: relative;
   overflow: hidden;
   white-space: nowrap;
-  text-overflow: ellipsis;
+  mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%);
 }
 
-.mini-artist {
-  font-size: 12px;
-  color: var(--text-secondary);
+.mini-song-measure {
+  position: absolute;
+  visibility: hidden;
+  white-space: nowrap;
+  font-size: 13px; font-weight: 600;
+  pointer-events: none;
+}
+
+.mini-title {
+  display: block;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  font-size: 13px; font-weight: 600;
+  color: var(--text-primary);
+}
+
+.mini-song-track {
+  display: inline-block;
+  white-space: nowrap;
+  animation: mini-marquee 12s linear infinite;
+}
+
+.mini-song-item {
+  font-size: 13px; font-weight: 600;
+  color: var(--text-primary);
+}
+
+.mini-song-gap { padding: 0 20px; color: var(--text-secondary); }
+
+@keyframes mini-marquee {
+  0% { transform: translateX(8px); }
+  100% { transform: translateX(calc(-50% + 8px)); }
+}
+
+.mini-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.mini-volume-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.mini-volume-btn {
+  width: 28px; height: 28px;
+  border: 0; border-radius: 999px;
+  background: transparent;
+  font-size: 14px;
+  cursor: pointer;
+  display: grid; place-items: center;
+}
+
+.mini-volume {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 24px;
+  margin-bottom: 6px;
+  padding: 2px 10px;
+  border-radius: 12px;
+  background: rgba(255,255,255,0.95);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+  writing-mode: vertical-lr;
+  direction: rtl;
+  accent-color: var(--text-primary);
+  cursor: pointer;
+}
+
+.vol-pop-enter-active,
+.vol-pop-leave-active {
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+.vol-pop-enter-from,
+.vol-pop-leave-to {
+  opacity: 0;
+  transform: translateX(-50%) scale(0.8);
 }
 
 .mini-progress {
@@ -348,20 +434,6 @@ function onEnded() {
   height: 100%;
   border-radius: inherit;
   background: var(--text-primary);
-}
-
-.mini-controls {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.mini-volume {
-  flex: 1;
-  min-width: 40px;
-  height: 3px;
-  accent-color: var(--text-primary);
-  cursor: pointer;
 }
 
 .player-sheet {
