@@ -195,9 +195,9 @@ function onEnded() {
         <IconButton label="下一首" @click.stop="props.store.nextTrack">››</IconButton>
         <IconButton label="收藏" :active="props.store.isFavorite(state.currentTrack)" @click.stop="props.store.toggleFavorite()">{{ props.store.isFavorite(state.currentTrack) ? '♥' : '♡' }}</IconButton>
         <div class="mini-volume-wrap">
-          <IconButton label="音量" @click.stop="showVolume = !showVolume">🔊</IconButton>
+          <IconButton label="音量" @click.stop="showVolume = !showVolume">◐</IconButton>
           <Transition name="vol-pop">
-            <input v-if="showVolume" class="mini-volume" type="range" min="0" max="1" step="0.01" :value="state.volume" @input="setVolume" @click.stop />
+            <input v-if="showVolume" class="mini-volume" type="range" min="0" max="1" step="0.01" orient="vertical" :value="state.volume" @input="setVolume" @click.stop />
           </Transition>
         </div>
       </div>
@@ -252,9 +252,9 @@ function onEnded() {
           <IconButton label="下一首" @click="props.store.nextTrack">››</IconButton>
           <IconButton label="收藏" :active="props.store.isFavorite(state.currentTrack)" @click="props.store.toggleFavorite()">{{ props.store.isFavorite(state.currentTrack) ? '♥' : '♡' }}</IconButton>
           <div class="mini-volume-wrap">
-            <IconButton label="音量" @click.stop="showVolume = !showVolume">🔊</IconButton>
+            <IconButton label="音量" @click.stop="showVolume = !showVolume">◐</IconButton>
             <Transition name="vol-pop">
-              <input v-if="showVolume" class="mini-volume" type="range" min="0" max="1" step="0.01" :value="state.volume" @input="setVolume" @click.stop />
+              <input v-if="showVolume" class="mini-volume" type="range" min="0" max="1" step="0.01" orient="vertical" :value="state.volume" @input="setVolume" @click.stop />
             </Transition>
           </div>
         </div>
@@ -366,15 +366,15 @@ function onEnded() {
   bottom: 100%;
   left: 50%;
   transform: translateX(-50%);
-  width: 100px;
-  height: 24px;
-  margin-bottom: 6px;
-  padding: 2px 10px;
-  border-radius: 12px;
+  width: 28px;
+  height: 100px;
+  margin-bottom: 8px;
+  padding: 8px 0;
+  border-radius: 14px;
   background: rgba(255,255,255,0.95);
   box-shadow: 0 2px 12px rgba(0,0,0,0.1);
-  writing-mode: vertical-lr;
-  direction: rtl;
+  -webkit-appearance: slider-vertical;
+  appearance: slider-vertical;
   accent-color: var(--text-primary);
   cursor: pointer;
 }
