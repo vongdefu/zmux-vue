@@ -169,9 +169,10 @@ function coverGradient(name) {
         >
           <div
             class="playlist-card-cover"
-            :style="{ background: coverGradient(playlist.name) }"
+            :style="{ background: playlist.cover ? 'transparent' : coverGradient(playlist.name) }"
           >
-            <span class="cover-letter">{{ playlist.name.slice(0, 1) }}</span>
+            <img v-if="playlist.cover" :src="playlist.cover" :alt="playlist.name" class="cover-img" />
+            <span v-else class="cover-letter">{{ playlist.name.slice(0, 1) }}</span>
           </div>
           <strong>{{ playlist.name }}</strong>
           <span class="card-count">{{ playlist.tracks.length }} 首</span>
@@ -246,6 +247,11 @@ function coverGradient(name) {
   font-size: 28px; font-weight: 800;
   color: rgba(255,255,255,0.85);
   text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.cover-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .playlist-card strong {

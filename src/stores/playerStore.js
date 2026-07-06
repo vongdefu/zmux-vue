@@ -329,6 +329,7 @@ function saveRecommendedPlaylist(recommendedPlaylistId) {
   const playlist = {
     id: `pl-${Date.now()}-${Math.random().toString(16).slice(2)}`,
     name: rec.name,
+    cover: rec.cover || null,
     sourcePlaylistId: rec.id,      // 只存引用，不存歌曲数据
     tracks: [],
   };
