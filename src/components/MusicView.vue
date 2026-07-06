@@ -31,9 +31,6 @@ const myTabs = [
 const favoriteCount = computed(() => props.store.state.favorites.length)
 const historyCount = computed(() => props.store.state.playHistory.length)
 
-function switchToMyTab() {
-  activeTab.value = 'playlists'
-}
 
 const selectedPlaylist = computed(
   () =>
@@ -100,7 +97,6 @@ function backToBrowse() {
     <header class="music-top-bar">
       <button class="music-back" @click="emit('navigate', 'home')" title="主页">←</button>
       <h1>美好音乐</h1>
-      <button class="music-profile-btn" @click="switchToMyTab" title="我的">👤</button>
     </header>
 
     <!-- 搜索栏 -->
@@ -131,8 +127,6 @@ function backToBrowse() {
         @click="activeTab = tab.id"
       >
         {{ tab.label }}
-        <span v-if="tab.id === 'favorites'" class="tab-count">{{ favoriteCount }}</span>
-        <span v-else-if="tab.id === 'history'" class="tab-count">{{ historyCount }}</span>
       </button>
     </nav>
 
@@ -240,6 +234,7 @@ function backToBrowse() {
 
       <!-- ========== 我的收藏 Tab ========== -->
       <template v-else-if="activeTab === 'favorites'">
+        <p class="tab-summary">共 {{ favoriteCount }} 首歌</p>
         <TrackList
           :tracks="store.state.favorites"
           :current-track="store.state.currentTrack"
@@ -253,6 +248,7 @@ function backToBrowse() {
 
       <!-- ========== 历史记录 Tab ========== -->
       <template v-else-if="activeTab === 'history'">
+        <p class="tab-summary">共 {{ historyCount }} 首歌</p>
         <div class="history-actions">
           <button v-if="store.state.playHistory.length" class="clear-btn" @click="store.clearPlayHistory()">清空历史记录</button>
         </div>
@@ -308,21 +304,7 @@ function backToBrowse() {
   place-items: center;
 }
 
-.music-profile-btn {
-  width: 34px;
-  height: 34px;
-  border: 0;
-  border-radius: 999px;
-  background: var(--accent);
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-  flex-shrink: 0;
-  display: grid;
-  place-items: center;
-}
-
-/* ---- 搜索栏（移至内容区） ---- */
+/* ---- 搜索栏 ---- */
 .music-search-bar {
   flex-shrink: 0;
   display: flex;
@@ -403,15 +385,11 @@ function backToBrowse() {
   background: var(--accent);
 }
 
-.tab-count {
-  display: inline-block;
-  margin-left: 3px;
-  padding: 1px 5px;
-  border-radius: 999px;
-  background: rgba(236, 65, 65, 0.12);
-  font-size: 10px;
-  font-weight: 700;
-  vertical-align: top;
+.tab-summary {
+  margin: 0;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 13px;
 }
 
 .history-actions {
