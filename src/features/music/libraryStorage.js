@@ -23,6 +23,12 @@ const TRACK_KEYS = [
   "qqQualityText",
   "jooxQualityText",
   "pay",
+  // 缓存资源：audioUrl / lrc / lrcUrl 保留，避免重复请求
+  "audioUrl",
+  "lrc",
+  "lrcUrl",
+  "detailsLoaded",
+  "detailsFetchedAt",
 ]
 
 export function serializeTrack(track) {
@@ -32,10 +38,6 @@ export function serializeTrack(track) {
     if (track[key] !== undefined && track[key] !== null && track[key] !== "")
       next[key] = track[key]
   })
-  next.detailsLoaded = false
-  next.audioUrl = null
-  next.lrc = null
-  next.lrcUrl = null
   return next.uid ? next : null
 }
 

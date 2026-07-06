@@ -150,8 +150,17 @@ export async function searchSource(source, keyword, options) {
   return [];
 }
 
+const CACHE_TTL = 30 * 60 * 1000; // 30 分钟缓存有效期
+
 export async function fetchTrackDetails(track) {
   if (!track) return track;
+
+  // 已有有效缓存（30 分钟内）→ 直接返回，不发请求
+  if (track.detailsLoaded && track.audioUrl && track.detailsFetchedAt) {
+    const age = Date.now() - track.detailsFetchedAt;
+    if (age < CACHE_TTL) return track;
+  }
+  // 已有详情且音频 URL 可用（同一次会话中已请求过）
   if (track.detailsLoaded && track.audioUrl && (track.lrc || !track.lrcUrl)) return track;
 
   if (track.source === 'netease') return fetchNeteaseDetails(track);
@@ -186,6 +195,7 @@ async function fetchNeteaseDetails(track) {
   }
 
   track.detailsLoaded = true;
+  track.detailsFetchedAt = Date.now();
   return track;
 }
 
@@ -218,6 +228,7 @@ async function fetchQQDetails(track) {
   }
 
   track.detailsLoaded = true;
+  track.detailsFetchedAt = Date.now();
   return track;
 }
 
@@ -251,6 +262,7 @@ async function fetchKuwoDetails(track) {
   track.lrc = data.lyric || track.lrc || null;
   track.lrcUrl = null;
   track.detailsLoaded = true;
+  track.detailsFetchedAt = Date.now();
 
   if (track.audioUrl) {
     const quality = inferQualityFromUrl(track.audioUrl);
@@ -282,6 +294,7 @@ async function fetchJooxDetails(track) {
   track.quality = best.tag || track.quality;
   track.qualityLabel = best.label || track.qualityLabel;
   track.detailsLoaded = true;
+  track.detailsFetchedAt = Date.now();
   return track;
 }
 
