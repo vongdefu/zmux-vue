@@ -348,9 +348,6 @@ function onEnded() {
   transition: opacity 0.12s ease;
 }
 .mini-next:active { opacity: 0.5; }
-  height: 34px;
-  font-size: 14px;
-}
 
 .player-sheet {
   position: absolute;
