@@ -10,7 +10,7 @@ const props = defineProps({
 })
 
 const newName = ref("")
-const selectedId = ref(props.store.state.playlists[0]?.id || "")
+const selectedId = ref("")
 const fileInput = ref(null)
 const loadingSavedTracks = ref(false)
 const loadingMoreSaved = ref(false)
