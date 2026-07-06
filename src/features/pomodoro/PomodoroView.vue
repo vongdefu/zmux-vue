@@ -1,7 +1,7 @@
 <script setup>
 import { computed, onBeforeUnmount, ref, watch } from 'vue'
-import { dateKey, loadPomodoro, savePomodoro } from '../services/pomodoroStorage'
-import { usePlayerStore } from '../stores/playerStore'
+import { dateKey, loadPomodoro, savePomodoro } from './pomodoroStorage'
+import { usePlayerStore } from '../../stores/playerStore'
 
 const emit = defineEmits(['back'])
 const store = usePlayerStore()

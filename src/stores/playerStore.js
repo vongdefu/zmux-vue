@@ -1,7 +1,7 @@
 import { computed, reactive } from 'vue';
-import { fetchTrackDetails, searchSource } from '../services/musicApi';
-import { createLibrarySnapshot, deserializeTrack, loadLibrary, saveLibrary } from '../services/libraryStorage';
-import { fetchPlaylistTracks, fetchDiscoverPlaylists, refreshPlaylists } from '../services/recommendedPlaylists';
+import { fetchTrackDetails, searchSource } from '../features/music/musicApi';
+import { createLibrarySnapshot, deserializeTrack, loadLibrary, saveLibrary } from '../features/music/libraryStorage';
+import { fetchPlaylistTracks, fetchDiscoverPlaylists, refreshPlaylists } from '../features/music/recommendedPlaylists';
 import { parseLrc } from '../utils/lyrics';
 
 const persisted = loadLibrary();

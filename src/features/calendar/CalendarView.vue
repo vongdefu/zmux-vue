@@ -4,12 +4,12 @@ import {
   loadCalendarData, saveCalendarData, addEvent, updateEvent, deleteEvent,
   addCalendar, deleteCalendar, updateCalendar, expandRecurringEvents,
   exportICS, importICS, generateUID,
-} from '../services/calendarStorage'
-import MonthGrid from './calendar/MonthGrid.vue'
-import WeekView from './calendar/WeekView.vue'
-import DayView from './calendar/DayView.vue'
-import EventSheet from './calendar/EventSheet.vue'
-import CalendarList from './calendar/CalendarList.vue'
+} from './calendarStorage'
+import MonthGrid from './MonthGrid.vue'
+import WeekView from './WeekView.vue'
+import DayView from './DayView.vue'
+import EventSheet from './EventSheet.vue'
+import CalendarList from './CalendarList.vue'
 
 const emit = defineEmits(['back'])
 

@@ -1,6 +1,6 @@
 <script setup>
 import { computed, onMounted, ref } from "vue"
-import { sourceMeta } from "../services/musicApi"
+import { sourceMeta } from "./musicApi"
 import TrackList from "./TrackList.vue"
 import PlaylistsView from "./PlaylistsView.vue"
 

@@ -1,6 +1,6 @@
 <script setup>
 import { computed, nextTick, ref, watch } from "vue"
-import { formatTime } from "../utils/lyrics"
+import { formatTime } from "../../utils/lyrics"
 import IconButton from "./IconButton.vue"
 import TrackArtwork from "./TrackArtwork.vue"
 

@@ -9,8 +9,8 @@ import {
   loadSchedule,
   saveSchedule,
   toggleTaskInWeek,
-} from '../services/scheduleStorage'
-import { usePlayerStore } from '../stores/playerStore'
+} from './scheduleStorage'
+import { usePlayerStore } from '../../stores/playerStore'
 
 const emit = defineEmits(['back'])
 const store = usePlayerStore()

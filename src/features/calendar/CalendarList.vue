@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { CALENDAR_COLORS } from '../../services/calendarStorage'
+import { CALENDAR_COLORS } from './calendarStorage'
 
 const props = defineProps({
   calendars: { type: Array, required: true },

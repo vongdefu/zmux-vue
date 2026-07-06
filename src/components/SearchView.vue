@@ -1,5 +1,5 @@
 <script setup>
-import { sourceMeta } from "../services/musicApi"
+import { sourceMeta } from "../features/music/musicApi"
 import TrackList from "./TrackList.vue"
 
 defineProps({

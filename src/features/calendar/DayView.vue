@@ -1,6 +1,6 @@
 <script setup>
 import { computed } from 'vue'
-import { getEventsForDate } from '../../services/calendarStorage'
+import { getEventsForDate } from './calendarStorage'
 
 const props = defineProps({
   data: { type: Object, required: true },

@@ -1,6 +1,6 @@
 <script setup>
 import { computed, reactive, watch } from 'vue'
-import { generateUID, CALENDAR_COLORS } from '../../services/calendarStorage'
+import { generateUID, CALENDAR_COLORS } from './calendarStorage'
 
 const props = defineProps({
   visible: { type: Boolean, default: false },

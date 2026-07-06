@@ -1,10 +1,10 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
-import { usePlayerStore } from '../stores/playerStore'
-import { loadPomodoro, dateKey } from '../services/pomodoroStorage'
-import { loadSchedule, saveSchedule } from '../services/scheduleStorage'
-import { loadHabits, saveHabits } from '../services/habitStorage'
-import { getTodayMondayStr } from '../services/scheduleStorage'
+import { usePlayerStore } from '../../stores/playerStore'
+import { loadPomodoro, dateKey } from '../pomodoro/pomodoroStorage'
+import { loadSchedule, saveSchedule } from '../schedule/scheduleStorage'
+import { loadHabits, saveHabits } from '../habit/habitStorage'
+import { getTodayMondayStr } from '../schedule/scheduleStorage'
 import LiquidGlassWidget from './LiquidGlassWidget.vue'
 
 const emit = defineEmits(['navigate'])

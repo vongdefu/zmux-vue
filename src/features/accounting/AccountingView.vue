@@ -6,8 +6,8 @@ import {
   DEFAULT_CATEGORIES,
   monthKey,
   createRecord,
-} from '../services/accountingStorage'
-import { usePlayerStore } from '../stores/playerStore'
+} from './accountingStorage'
+import { usePlayerStore } from '../../stores/playerStore'
 
 const emit = defineEmits(['back'])
 const store = usePlayerStore()

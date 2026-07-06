@@ -5,8 +5,8 @@ import {
   dateKey,
   loadHabits,
   saveHabits,
-} from '../services/habitStorage'
-import { usePlayerStore } from '../stores/playerStore'
+} from './habitStorage'
+import { usePlayerStore } from '../../stores/playerStore'
 
 const emit = defineEmits(['back'])
 const store = usePlayerStore()
