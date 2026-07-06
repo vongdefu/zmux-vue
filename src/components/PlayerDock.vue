@@ -174,21 +174,23 @@ function onEnded() {
       <TrackArtwork :track="state.currentTrack" size="small" />
     </div>
 
-    <div class="mini-info" @click="state.playerOpen = true">
-      <span class="mini-title">{{ state.currentTrack?.title || '未在播放' }}</span>
-      <span class="mini-artist">{{ state.currentTrack?.artist || '等待播放' }}</span>
-    </div>
+    <div class="mini-right">
+      <div class="mini-info" @click="state.playerOpen = true">
+        <span class="mini-title">{{ state.currentTrack?.title || '未在播放' }}</span>
+        <span class="mini-artist">{{ state.currentTrack?.artist || '等待播放' }}</span>
+      </div>
 
-    <div class="mini-controls-row">
-      <button class="mini-ctrl" title="上一首" @click.stop="props.store.previousTrack">‹</button>
-      <button class="mini-play" @click.stop="togglePlay">{{ state.isPlaying ? 'Ⅱ' : '▶' }}</button>
-      <button class="mini-ctrl" title="下一首" @click.stop="props.store.nextTrack">›</button>
-      <button
-        class="mini-ctrl"
-        :class="{ active: props.store.isFavorite(state.currentTrack) }"
-        :title="props.store.isFavorite(state.currentTrack) ? '取消收藏' : '收藏'"
-        @click.stop="props.store.toggleFavorite()"
-      >{{ props.store.isFavorite(state.currentTrack) ? '♥' : '♡' }}</button>
+      <div class="mini-progress" @click="seek">
+        <span class="mini-progress-fill" :style="{ width: `${progress}%` }" />
+      </div>
+
+      <div class="mini-controls">
+        <IconButton label="上一首" @click.stop="props.store.previousTrack">‹‹</IconButton>
+        <IconButton label="播放或暂停" tone="primary" @click.stop="togglePlay">{{ state.isPlaying ? 'Ⅱ' : '▶' }}</IconButton>
+        <IconButton label="下一首" @click.stop="props.store.nextTrack">››</IconButton>
+        <IconButton label="收藏" :active="props.store.isFavorite(state.currentTrack)" @click.stop="props.store.toggleFavorite()">{{ props.store.isFavorite(state.currentTrack) ? '♥' : '♡' }}</IconButton>
+        <input class="mini-volume" type="range" min="0" max="1" step="0.01" :value="state.volume" @input="setVolume" @click.stop />
+      </div>
     </div>
   </div>
 
@@ -278,11 +280,10 @@ function onEnded() {
   z-index: 20;
   display: flex;
   align-items: center;
-  gap: 10px;
-  height: 56px;
+  gap: 12px;
   transition: bottom 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
-  border-radius: 16px;
-  padding: 0 10px;
+  border-radius: 18px;
+  padding: 10px 12px;
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(22px);
   border: 1px solid rgba(0, 0, 0, 0.06);
@@ -292,19 +293,27 @@ function onEnded() {
 .mini-cover {
   cursor: pointer;
   flex-shrink: 0;
-  border-radius: 8px;
+  border-radius: 10px;
   overflow: hidden;
+  width: 56px;
+  height: 56px;
   transition: transform 0.16s ease;
 }
 .mini-cover:active { transform: scale(0.94); }
 
-.mini-info {
+.mini-right {
   flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 2px;
+  gap: 6px;
+}
+
+.mini-info {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
   cursor: pointer;
 }
 
@@ -325,37 +334,35 @@ function onEnded() {
   text-overflow: ellipsis;
 }
 
-.mini-controls-row {
+.mini-progress {
+  width: 100%;
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(60, 60, 67, 0.14);
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.mini-progress-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--text-primary);
+}
+
+.mini-controls {
   display: flex;
   align-items: center;
-  gap: 0;
-  flex-shrink: 0;
+  gap: 8px;
 }
 
-.mini-ctrl {
-  width: 32px; height: 32px;
-  border: 0; border-radius: 999px;
-  background: transparent;
-  color: var(--text-secondary);
-  font-size: 14px; font-weight: 700;
+.mini-volume {
+  flex: 1;
+  min-width: 40px;
+  height: 3px;
+  accent-color: var(--text-primary);
   cursor: pointer;
-  display: grid; place-items: center;
-  transition: color 0.12s ease;
 }
-.mini-ctrl:active { opacity: 0.5; }
-.mini-ctrl.active { color: var(--accent); }
-
-.mini-play {
-  width: 36px; height: 36px;
-  border: 0; border-radius: 999px;
-  background: var(--text-primary);
-  color: white;
-  font-size: 14px; font-weight: 800;
-  cursor: pointer;
-  display: grid; place-items: center;
-  transition: transform 0.12s ease;
-}
-.mini-play:active { transform: scale(0.92); }
 
 .player-sheet {
   position: absolute;
