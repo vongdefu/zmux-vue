@@ -151,7 +151,9 @@ async function search(reset = true) {
   }
 
   let added = 0;
-  const tasks = enabled.map(async (source) => {
+  // 顺序请求每个音源，避免并发请求
+  for (const source of enabled) {
+    state.statusText = `正在搜索 ${source}`;
     try {
       const tracks = await searchSource(source, keyword, {
         page: state.perSourcePage[source] || 1,
@@ -166,9 +168,7 @@ async function search(reset = true) {
     } catch (error) {
       console.warn(`${source} search failed`, error);
     }
-  });
-
-  await Promise.all(tasks);
+  }
   state.searchInProgress = false;
   state.statusText = state.searchResults.length ? `找到 ${state.searchResults.length} 首` : '暂无结果';
 
