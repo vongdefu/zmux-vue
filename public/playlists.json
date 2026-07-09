@@ -1,48 +1,8 @@
 [
   {
-    "id": "490158454",
-    "name": "电影慰时光 | 华语怀旧文艺片精选",
-    "cover": "https://p1.music.126.net/Dn8SeEUr-7--FlrZ-LKVAw==/18601537720555575.jpg"
-  },
-  {
-    "id": "306397077",
-    "name": "2026s心跳节拍｜甜酷自信的派对电流",
-    "cover": "https://p1.music.126.net/tvSSd2lSS8UvQLBdC-0nxg==/109951172787046721.jpg"
-  },
-  {
     "id": "4887974807",
     "name": "青春的记忆|九十年代最好听的100首歌",
-    "cover": "https://p1.music.126.net/WvycJs_TU3RnbPGv6AUHFg==/109951164754514726.jpg"
-  },
-  {
-    "id": "316223640",
-    "name": "电子·中国风 I 感受角徵宫商的荡气回肠",
-    "cover": "https://p1.music.126.net/6imPsFlxX3iXwK_2TZGuQA==/109951164854408532.jpg"
-  },
-  {
-    "id": "111221399",
-    "name": "那些好听到发疯的粤语歌",
-    "cover": "https://p1.music.126.net/tqLJn-RnpIODwSX9UHQvzQ==/109951164869080240.jpg"
-  },
-  {
-    "id": "368529707",
-    "name": "前奏直接秒杀的纯音乐",
-    "cover": "https://p1.music.126.net/Y3rXiAWKw75VUjvMBQsxUA==/1424967077460786.jpg"
-  },
-  {
-    "id": "3001035934",
-    "name": "国风新潮大赏 | 歌声岂合世间闻",
-    "cover": "https://p2.music.126.net/6lhQ6jqPaBfsRdOJEgeiYw==/109951168239184663.jpg"
-  },
-  {
-    "id": "37432514",
-    "name": "那些只听前奏就中毒的英文歌",
-    "cover": "https://p2.music.126.net/mQy3lRj6YJ0TW3fM9v85YA==/6643249256145165.jpg"
-  },
-  {
-    "id": "1982383224",
-    "name": "百首良曲|刷（抄）作业必备燃曲",
-    "cover": "https://p2.music.126.net/nYGeFaahwU6M70AWWQqQKg==/109951164856855132.jpg"
+    "cover": "https://p2.music.126.net/WvycJs_TU3RnbPGv6AUHFg==/109951164754514726.jpg"
   },
   {
     "id": "360062344",
@@ -50,9 +10,19 @@
     "cover": "https://p2.music.126.net/92NWlGo76ha-if-WMK3vCg==/1410673428769729.jpg"
   },
   {
-    "id": "117377955",
-    "name": "【欧美男团】秒杀耳朵系列",
-    "cover": "https://p2.music.126.net/FJAxNkFoq3dGiS9tz_bGgQ==/3405187512421439.jpg"
+    "id": "988690134",
+    "name": "经典老歌，久听不厌",
+    "cover": "https://p2.music.126.net/VFd5cboNTbnYsWZ5DBn9bg==/18953381440004340.jpg"
+  },
+  {
+    "id": "111221399",
+    "name": "那些好听到发疯的粤语歌",
+    "cover": "https://p2.music.126.net/tqLJn-RnpIODwSX9UHQvzQ==/109951164869080240.jpg"
+  },
+  {
+    "id": "37432514",
+    "name": "那些只听前奏就中毒的英文歌",
+    "cover": "https://p2.music.126.net/mQy3lRj6YJ0TW3fM9v85YA==/6643249256145165.jpg"
   },
   {
     "id": "2153548870",
@@ -60,9 +30,29 @@
     "cover": "https://p2.music.126.net/lRE0QHTUkA_DxlB14uzSqg==/109951164207703933.jpg"
   },
   {
-    "id": "988690134",
-    "name": "经典老歌，久听不厌",
-    "cover": "https://p2.music.126.net/VFd5cboNTbnYsWZ5DBn9bg==/18953381440004340.jpg"
+    "id": "3001035934",
+    "name": "国风新潮大赏 | 歌声岂合世间闻",
+    "cover": "https://p2.music.126.net/6lhQ6jqPaBfsRdOJEgeiYw==/109951168239184663.jpg"
+  },
+  {
+    "id": "117377955",
+    "name": "【欧美男团】秒杀耳朵系列",
+    "cover": "https://p2.music.126.net/FJAxNkFoq3dGiS9tz_bGgQ==/3405187512421439.jpg"
+  },
+  {
+    "id": "1982383224",
+    "name": "百首良曲|刷（抄）作业必备燃曲",
+    "cover": "https://p2.music.126.net/nYGeFaahwU6M70AWWQqQKg==/109951164856855132.jpg"
+  },
+  {
+    "id": "306397077",
+    "name": "2026s心跳节拍｜甜酷自信的派对电流",
+    "cover": "https://p2.music.126.net/tvSSd2lSS8UvQLBdC-0nxg==/109951172787046721.jpg"
+  },
+  {
+    "id": "368529707",
+    "name": "前奏直接秒杀的纯音乐",
+    "cover": "https://p2.music.126.net/Y3rXiAWKw75VUjvMBQsxUA==/1424967077460786.jpg"
   },
   {
     "id": "310970433",
@@ -70,254 +60,214 @@
     "cover": "https://p2.music.126.net/2MsstS-M9w5-li0aRy3sUQ==/1380986606815861.jpg"
   },
   {
-    "id": "5240950706",
-    "name": "［治愈系］写作业/休息必备歌单",
-    "cover": "https://p2.music.126.net/8PGYJiF2Y1l5fVKjOo58cg==/109951166793602422.jpg"
+    "id": "490158454",
+    "name": "电影慰时光 | 华语怀旧文艺片精选",
+    "cover": "https://p2.music.126.net/Dn8SeEUr-7--FlrZ-LKVAw==/18601537720555575.jpg"
   },
   {
-    "id": "143293719",
-    "name": "『华语』KTV最佳对唱“CP”称号就靠它了",
-    "cover": "https://p2.music.126.net/FF7WrgCNlyrAYdef7RyvAw==/1396379771673334.jpg"
+    "id": "316223640",
+    "name": "电子·中国风 I 感受角徵宫商的荡气回肠",
+    "cover": "https://p2.music.126.net/6imPsFlxX3iXwK_2TZGuQA==/109951164854408532.jpg"
   },
   {
-    "id": "5438576528",
-    "name": "时空储蓄罐 -「钢琴全集」| 学习 • 静心",
-    "cover": "https://p2.music.126.net/2rzV7U3UMEnDI2vSUnEyxA==/109951165702756075.jpg"
+    "id": "9590170343",
+    "name": "等我的隐喻能被你读懂",
+    "cover": "https://p2.music.126.net/FgCnjV_CJ5eu0AnYzjlcuA==/109951172400999981.jpg"
   },
   {
-    "id": "536223959",
-    "name": "《吉尼斯世界纪录大全》中的音乐与音乐人",
-    "cover": "https://p2.music.126.net/0BLSXdh7Up_y4KqaOvycTA==/109951162822972659.jpg"
+    "id": "74452528",
+    "name": "当这些歌被民谣歌手翻唱",
+    "cover": "https://p2.music.126.net/KmE36aZl85vi5jyWwJd8qg==/7794437930139253.jpg"
   },
   {
-    "id": "5187618532",
-    "name": "[另类迷幻]·夏夜晚风与绮丽旖梦",
-    "cover": "https://p2.music.126.net/S7ZoHfLrb0ow91nDCoqvHg==/109951165246712099.jpg"
+    "id": "14229130166",
+    "name": "轻音乐｜伴你走出今天的阴霾",
+    "cover": "https://p2.music.126.net/lyBUeu-MCpOoROVitLe0GQ==/109951173260271992.jpg"
   },
   {
-    "id": "171967885",
-    "name": "古典音樂史上最優美的夜曲与小夜曲",
-    "cover": "https://p2.music.126.net/qQvBj4_NAvzwXptbNeU7Sw==/3297435382141104.jpg"
+    "id": "128328219",
+    "name": "B榜官网排出的史上最佳专辑封面前50",
+    "cover": "https://p2.music.126.net/5CuLry1JQsbXoBvBgL9BmQ==/2535473814614187.jpg"
   },
   {
-    "id": "9404971442",
-    "name": "世界之外｜全曲合集 爱能突破次元壁",
-    "cover": "https://p2.music.126.net/Hf8GmAodovtCDruv0XjdfA==/109951173446737990.jpg"
+    "id": "17885325457",
+    "name": "次世代欧美流行解码",
+    "cover": "https://p2.music.126.net/nDkh-4xF9KNfH9u6dS8YLQ==/109951173017882400.jpg"
   },
   {
-    "id": "97756507",
-    "name": "【一曲惊艳冷门】只为俘获双耳",
-    "cover": "https://p2.music.126.net/-PnoS6i5v9USp3I2_9C3jA==/109951166685327486.jpg"
+    "id": "151202235",
+    "name": "【被施过魔法】适合大开脑洞/做白日梦的BGM",
+    "cover": "https://p2.music.126.net/eRwsMThAQS0-NjeDBYQ6PQ==/109951166685328838.jpg"
   },
   {
-    "id": "13451347452",
-    "name": "刻骨銘心的痛一次就夠了",
-    "cover": "https://p2.music.126.net/v_lt_ZBP-p_R_1sQYH9z0Q==/109951172825302862.jpg"
+    "id": "13003936711",
+    "name": "摇滚不死，我们永远年轻",
+    "cover": "https://p2.music.126.net/vI7fDMjkLlrsporlQr95kA==/109951170747519856.jpg"
   },
   {
-    "id": "576885519",
-    "name": "晕音乐 | R&B的慢热被窝",
-    "cover": "https://p2.music.126.net/INng2hgEw5TW7Ocpcadt5w==/109951166605405394.jpg"
+    "id": "54472884",
+    "name": "漫威与DC电影原声之英雄荟萃·下—风之君临",
+    "cover": "https://p2.music.126.net/uP0RvNuAFPOmfrmaK8EZHA==/7790039883141801.jpg"
   },
   {
-    "id": "9367704074",
-    "name": "『如果你也喜欢·宋雨琦』合集歌单（继更）",
-    "cover": "https://p2.music.126.net/inihI_UJeplvK5OKTMjRfQ==/109951170923055431.jpg"
+    "id": "12932221822",
+    "name": "爱阴天 爱骤雨 爱你疲惫的双眸和破碎的灵魂",
+    "cover": "https://p2.music.126.net/VrY0gFsxkFYw-LukX1ygRg==/109951170204793962.jpg"
   },
   {
-    "id": "365383154",
-    "name": "欧美·中国风 I 西方节奏里绮丽的东方乐韵",
-    "cover": "https://p2.music.126.net/l48RO2VG7y_LmIVDcUKheg==/18735678138417625.jpg"
+    "id": "105415765",
+    "name": "爵士圣经 JAZZ BIBLE vol.1",
+    "cover": "https://p2.music.126.net/jWE3OEZUlwdz0ARvyQ9wWw==/109951165474121408.jpg"
   },
   {
-    "id": "13991841968",
-    "name": "〖看简介〗暧昧/涩気向/炒菜/调狗/危险氛围",
-    "cover": "https://p2.music.126.net/bVDQ4YV3XOQvBKGN44sI4A==/109951172837232791.jpg"
+    "id": "17982095164",
+    "name": "歌手2026：不同世代，各有锋芒",
+    "cover": "https://p2.music.126.net/jVXItac1KRY4uQ_QmDSoxA==/109951173259121759.jpg"
   },
   {
-    "id": "96148442",
-    "name": "他们只出过一张唱片，但足够精彩",
-    "cover": "https://p2.music.126.net/uHJX46sd7rSCkL1WXU7lIA==/3373301674457383.jpg"
+    "id": "32471960",
+    "name": "温柔的摇滚吟颂者",
+    "cover": "https://p2.music.126.net/h4I7lnnAxIqiw6y7-PfmkA==/6646547790789163.jpg"
   },
   {
-    "id": "13463167806",
-    "name": "午后纯音｜风吹树响是生命的歌",
-    "cover": "https://p2.music.126.net/uKZWPjFOFgL-MhmcW7dqYw==/109951171009440811.jpg"
+    "id": "13022896986",
+    "name": "｜欧美Hiphop｜引领全球潮流趋势",
+    "cover": "https://p2.music.126.net/uX6rLs8p0Ygf2k4lKgUq1Q==/109951173377410487.jpg"
   },
   {
-    "id": "4780891",
-    "name": "撞击心脏的顶级重磅电音（心脏病者勿听）",
-    "cover": "https://p2.music.126.net/omm204MYGB6FLhGB6MPWcg==/5849401859784474.jpg"
+    "id": "26467411",
+    "name": "那些你熟悉却又不知道名字的轻音乐",
+    "cover": "https://p2.music.126.net/8fQ9jzTJnMweLNm7VoyPSw==/6623458045881301.jpg"
   },
   {
-    "id": "13852202439",
-    "name": "［韩语］缘分竟然默许你离去",
-    "cover": "https://p2.music.126.net/EZtGBoxLldf0D7x-5PxxbA==/109951173294574401.jpg"
+    "id": "17993682372",
+    "name": "待我的心声 终被你了解",
+    "cover": "https://p2.music.126.net/HmIuP4O9OoXLnje0TG6fNg==/109951173361679878.jpg"
   },
   {
-    "id": "138641680",
-    "name": "相貌与实力兼具 | 盘点90后电音小鲜肉",
-    "cover": "https://p2.music.126.net/-u1gXaYzzy2Gr37WKfP5Rg==/2540971375149547.jpg"
+    "id": "482256233",
+    "name": "灵魂乐史 ' 百位歌者的心灵呼唤",
+    "cover": "https://p2.music.126.net/VV6eHjpxOOlKDkefsgg9rg==/109951163689589985.jpg"
   },
   {
-    "id": "14068522150",
-    "name": "欧美流行里，舞池眼神对上那秒",
-    "cover": "https://p2.music.126.net/9wRZQUhu0AxXf0eE1SOang==/109951173390583761.jpg"
+    "id": "17914295387",
+    "name": "「风月难渡」酸涩文学 自带拉扯感",
+    "cover": "https://p2.music.126.net/7EcU8PcJXsHykA5pJNBpxQ==/109951173373719285.jpg"
   },
   {
-    "id": "386400687",
-    "name": "【K-Indie】欧美制作感的韩国独立音乐",
-    "cover": "https://p2.music.126.net/6KQ0jEDvksFueqU57OaokQ==/3250156373243186.jpg"
+    "id": "471117882",
+    "name": "蓝调老炮教你如何撩妹",
+    "cover": "https://p2.music.126.net/PGJX1mJeS4ZnHSqCT22IfQ==/109951162793495690.jpg"
   },
   {
-    "id": "17700591666",
-    "name": "A-Lin黄丽玲歌迹演唱会巡演歌单-更新郑州站",
-    "cover": "https://p2.music.126.net/h5CfSmKqwmejBzT3MuOl0Q==/109951172678145832.jpg"
+    "id": "10151331973",
+    "name": "〖艺术永生〗——Artcore/温柔与治愈的旋律",
+    "cover": "https://p2.music.126.net/Elp_TniT7ivW6EqAE3VZPQ==/109951169670451971.jpg"
   },
   {
-    "id": "37650114",
-    "name": "迷离电子风格节奏钢琴",
-    "cover": "https://p2.music.126.net/MH4vmjoAiG_ygZvevEXzKA==/3228166140178571.jpg"
+    "id": "62687589",
+    "name": "浓情欧洲，清新小语种",
+    "cover": "https://p2.music.126.net/WVJ-w_orhIBawXWj8DwZDw==/2945591651012211.jpg"
   },
   {
-    "id": "18006811157",
-    "name": "思念太吵｜把自己藏进歌里等天亮",
-    "cover": "https://p2.music.126.net/RBtBhwnBvuV3wCX6MxbE4Q==/109951173397995218.jpg"
+    "id": "18080796321",
+    "name": "纯纯仙品｜只给少数人的极致vibe",
+    "cover": "https://p2.music.126.net/ZOXwJAmnupV9snDvOZ8r5w==/109951173454602567.jpg"
   },
   {
-    "id": "79115078",
-    "name": "【Sax电音】性感Sax 挑逗神经",
-    "cover": "https://p2.music.126.net/HrYgBekmN45tlLRbgT9c-Q==/2264993953263462.jpg"
+    "id": "11764698",
+    "name": "背景音乐之旅-不朽的交响曲",
+    "cover": "https://p2.music.126.net/Nw0hEFV78-2cCx912UwzYw==/5916472069250191.jpg"
   },
   {
-    "id": "17990558070",
-    "name": "意难平BGM｜在梅雨季把遗憾偷偷晾干",
-    "cover": "https://p2.music.126.net/YLChFHaPqfm6yGmucluMAg==/109951173355905118.jpg"
+    "id": "14384931719",
+    "name": "高能量歌曲：净化负面磁场 助力显华成功",
+    "cover": "https://p2.music.126.net/LhNpEv5LEFEGU1_s4Zjc-A==/109951172114257718.jpg"
   },
   {
-    "id": "48494804",
-    "name": "NBA全明星御用宣传单曲！",
-    "cover": "https://p2.music.126.net/Rs7kFNjYJecB6ij4Nxe0kQ==/109951163865599173.jpg"
+    "id": "165164853",
+    "name": "惊为天人！歪果仁唱起中文也能如此传神",
+    "cover": "https://p2.music.126.net/xVCmnAm_i28sVDXqUWU9NQ==/3285340750213036.jpg"
   },
   {
-    "id": "7135084094",
-    "name": "-「加州66号公路」蓝调、布鲁斯、公路音乐",
-    "cover": "https://p2.music.126.net/w43n1ieri1DgEjaqPr8NNA==/109951168852800332.jpg"
+    "id": "17974674072",
+    "name": "恰逢小满：允许略带遗憾，小满胜过万全",
+    "cover": "https://p2.music.126.net/L3TXcj2xZmhJaDDKpTnZUA==/109951173239889517.jpg"
   },
   {
-    "id": "153041999",
-    "name": "「开脑洞」拍得像电影一样的MV",
-    "cover": "https://p2.music.126.net/myoqo4_y85e2WU_vRbu4iQ==/1366692966729425.jpg"
+    "id": "60914945",
+    "name": "摇滚Live也可以温柔到骨子里",
+    "cover": "https://p2.music.126.net/QNyfDk6lO5C1ol28COuVCw==/18333256881800419.jpg"
   },
   {
-    "id": "8780955963",
-    "name": "【宝藏乐队】夜鹿(ヨルシカ) 全专辑收录",
-    "cover": "https://p2.music.126.net/kGMGiSmCtZm6fvaQz5YSnQ==/109951168961883724.jpg"
+    "id": "8928687868",
+    "name": "梦核、怪核等核类、氛围助眠音乐合集",
+    "cover": "https://p2.music.126.net/YzRRQGqpadQMlCGxqYYNlA==/109951170303251442.jpg"
   },
   {
-    "id": "25201357",
-    "name": "大师们牛逼轰轰的Swing Jazz",
-    "cover": "https://p2.music.126.net/zCd3ckFcQFuLzdy9wqELDQ==/8970915371029268.jpg"
+    "id": "49927225",
+    "name": "中国民谣集",
+    "cover": "https://p2.music.126.net/EnVIxhgB0zZR8xUh2akrNg==/7705377487831222.jpg"
   },
   {
-    "id": "14256242756",
-    "name": "氛围感｜蓝调 R&B与SOUL交织的慵懒微醺夜",
-    "cover": "https://p2.music.126.net/ZM6T1s_MYgmsHBqGHw-EQg==/109951172243152074.jpg"
+    "id": "17811571092",
+    "name": " 氛围感韩曲｜旋律一响直接沦陷",
+    "cover": "https://p2.music.126.net/GzdFO_AickLv3ySFU4w4MQ==/109951172860156494.jpg"
   },
   {
-    "id": "88980037",
-    "name": "重温“古惑仔” 你被影响到了吗?",
-    "cover": "https://p2.music.126.net/ssbqy0RXtpKUkhA3tXqCzQ==/2903810211583387.jpg"
+    "id": "17950786373",
+    "name": "一曲封神 华语乐坛经典流行单曲",
+    "cover": "https://p2.music.126.net/ZqUj2saM1Cylnzol-oUlfg==/109951173183059987.jpg"
   },
   {
-    "id": "8859300962",
-    "name": "宝岛情歌｜韦礼安 周兴哲 HUSH 卢广仲",
-    "cover": "https://p2.music.126.net/dtaUpL_tl9MPViPKH_yF6A==/109951169098262440.jpg"
+    "id": "8590814496",
+    "name": "韩语R&B｜温柔在耳边凝成絮语",
+    "cover": "https://p2.music.126.net/Q9Nrns8cByHZUJlkSojhrg==/109951170569002760.jpg"
   },
   {
-    "id": "71379794",
-    "name": "【窗外细雨看世界 ~人间风情小语种】精选辑",
-    "cover": "https://p2.music.126.net/UdpWIO-8R1I3juWyGcIaRQ==/2914805326446200.jpg"
+    "id": "14158561233",
+    "name": "节奏布鲁斯 | 如果你也听蓝调",
+    "cover": "https://p2.music.126.net/Gy_KlwTWecxcFjHREJSkAQ==/109951171891964853.jpg"
   },
   {
-    "id": "13689684836",
-    "name": "鸣潮先约电台｜一键收录鸣潮好听的BGM",
-    "cover": "https://p2.music.126.net/S8nkYQr02z2zNYgH5VrAqw==/109951171405442741.jpg"
+    "id": "17451345766",
+    "name": "欢迎回到心流入口：",
+    "cover": "https://p2.music.126.net/O_ggADx84MNq1FKj7UR8JA==/109951172313139823.jpg"
   },
   {
-    "id": "4241903",
-    "name": "全球最动听的法语歌",
-    "cover": "https://p2.music.126.net/J0FlZEbCHDKxBFCmeKKvGQ==/1312816883613702.jpg"
+    "id": "17668472980",
+    "name": "中文说唱新星Top Barry杨博睿的发迹之路",
+    "cover": "https://p2.music.126.net/2zXyafSx_oKFXNTUFgmmGQ==/109951172590231588.jpg"
   },
   {
-    "id": "10063977450",
-    "name": "学园偶像大师/初星学园 收录曲 [6/16更新]",
-    "cover": "https://p1.music.126.net/ztt4hMg5osgB_G6nw_uUFw==/109951173524856575.jpg"
+    "id": "13940926696",
+    "name": "盛夏白瓷梅子汤 冰块撞壁叮当响",
+    "cover": "https://p2.music.126.net/eB2poscOWt1_CtUX5cARrQ==/109951171416260372.jpg"
   },
   {
-    "id": "331202780",
-    "name": "盘点 | 美国偶像十五年，那些无冕之王",
-    "cover": "https://p1.music.126.net/J6GXm6LjdKlOnINqnDbrqg==/1743825441662798.jpg"
+    "id": "8516495803",
+    "name": "『洛天依』华风夏韵,洛水天依",
+    "cover": "https://p2.music.126.net/IAoRf7DF7H8AYIQSa3Mi2g==/109951169289691057.jpg"
   },
   {
-    "id": "12619696129",
-    "name": "氛围感·干净轻松的旋律，试出耳朵的小确幸~",
-    "cover": "https://p1.music.126.net/Jb7VcF-5JLh0hv5gUJdaYw==/109951170026992748.jpg"
+    "id": "17827788216",
+    "name": "TizzyT「流行」演唱会歌单【全站顺序版】",
+    "cover": "https://p2.music.126.net/XWLHhCANY_UsDAvbAoJQxw==/109951172908317269.jpg"
   },
   {
-    "id": "46917435",
-    "name": "冲击耳膜！欧美说唱最强音",
-    "cover": "https://p1.music.126.net/i0kCLTaMFmMcnz1CckRmrQ==/2882919488477676.jpg"
+    "id": "17903991254",
+    "name": "【欧美】全球青春修炼手册",
+    "cover": "https://p2.music.126.net/ZU_cNUrSgzuMH1OSUqfxdw==/109951173072079838.jpg"
   },
   {
-    "id": "12990132798",
-    "name": "或许是离别太久 已经不适合重逢了",
-    "cover": "https://p1.music.126.net/eJal7pFCtGrCYb-2suwFUg==/109951170258195753.jpg"
-  },
-  {
-    "id": "82857677",
-    "name": "〖我所挚爱的粤语男声〗",
-    "cover": "https://p1.music.126.net/RU9vsTrkmutPxOCEwxRqZg==/2890616071712963.jpg"
-  },
-  {
-    "id": "12640262454",
-    "name": "【明日方舟】塞壬唱片中那些好听到爆的歌",
-    "cover": "https://p1.music.126.net/0fraBjNk6TVLH98LFk_ROw==/109951172102698210.jpg"
-  },
-  {
-    "id": "419881898",
-    "name": "江湖神话：时光流逝，女神永恒",
-    "cover": "https://p1.music.126.net/-jUkx18sy2quhQ2w8PPxug==/1385384664520142.jpg"
-  },
-  {
-    "id": "17868608375",
-    "name": "责任由我承担 伤痕也由我疗愈对吗",
-    "cover": "https://p1.music.126.net/ui8L5WLDEGw_orD032cr4w==/109951173202376389.jpg"
-  },
-  {
-    "id": "157850478",
-    "name": "「中英猴子歌大集合」全部猴子·悟空",
-    "cover": "https://p1.music.126.net/XkNYWvXkYznRZQILe0r8MQ==/6647647302064887.jpg"
-  },
-  {
-    "id": "13692715071",
-    "name": "日语开口跪｜秒速心动，灵魂震颤",
-    "cover": "https://p1.music.126.net/ds6pZu-FHMyvVFFeoR97FQ==/109951173362174805.jpg"
-  },
-  {
-    "id": "3758814",
-    "name": "芝士味爵士女声",
-    "cover": "https://p1.music.126.net/GWyiWMmdK4VTzKeDAlpo9Q==/2126455488125146.jpg"
-  },
-  {
-    "id": "7482946604",
-    "name": "绝美古风｜诗词歌赋 浅唱国韵寄流年",
-    "cover": "https://p1.music.126.net/e-W_3sWlWN9oZZMT2GueMw==/109951173018602817.jpg"
+    "id": "18057968371",
+    "name": "旋律の魔力『感受节奏的冲击』",
+    "cover": "https://p2.music.126.net/RDOBnvOl0R0BhbfIbR_KIw==/109951173398039081.jpg"
   },
   {
     "id": "17980094136",
     "name": "森系/夏/春/治愈 舒缓 清新 纯音乐",
-    "cover": "https://p2.music.126.net/LULyDVAsyFJ1NuGzvqQlmg==/109951173253364201.jpg"
+    "cover": "https://p1.music.126.net/LULyDVAsyFJ1NuGzvqQlmg==/109951173253364201.jpg"
   },
   {
     "id": "17990594711",
@@ -327,7 +277,7 @@
   {
     "id": "17900055099",
     "name": "春和景明：“日暮春山绿，我心清且微”",
-    "cover": "https://p2.music.126.net/MQzD9qe2ms3UddbxBuPPZg==/109951173052720257.jpg"
+    "cover": "https://p1.music.126.net/MQzD9qe2ms3UddbxBuPPZg==/109951173052720257.jpg"
   },
   {
     "id": "17920083804",
@@ -352,22 +302,27 @@
   {
     "id": "17980906438",
     "name": "国风/古风大赏 | 歌声岂合世间闻",
-    "cover": "https://p1.music.126.net/OXXXQ1xL8MFw7EGYRV7hfA==/109951173260128907.jpg"
+    "cover": "https://p2.music.126.net/OXXXQ1xL8MFw7EGYRV7hfA==/109951173260128907.jpg"
   },
   {
     "id": "17931281210",
     "name": "[RYM] 最受欢迎的100张另类摇滚专辑",
-    "cover": "https://p1.music.126.net/ku2Nz2qysB44M_esckOMhA==/109951173140627836.jpg"
+    "cover": "https://p2.music.126.net/ku2Nz2qysB44M_esckOMhA==/109951173140627836.jpg"
   },
   {
     "id": "17968596879",
     "name": "夏 梦 美 学 | 坠入氤氲与绿意的梦境",
-    "cover": "https://p1.music.126.net/lmXnL23ytcBqNDOat5R4Og==/109951173226580366.jpg"
+    "cover": "https://p2.music.126.net/lmXnL23ytcBqNDOat5R4Og==/109951173226580366.jpg"
   },
   {
     "id": "18003812728",
     "name": "「花谱」宿声香港Live 完整歌单 (演唱顺序)",
-    "cover": "https://p1.music.126.net/ECsdiGPBGlfvjSxF2xxFiQ==/109951173321765733.jpg"
+    "cover": "https://p2.music.126.net/ECsdiGPBGlfvjSxF2xxFiQ==/109951173321765733.jpg"
+  },
+  {
+    "id": "18088651885",
+    "name": "【沉浸式纯音】春潮入梦｜万物生长的声音",
+    "cover": "https://p2.music.126.net/OWZkKkAlBBxB0_-9sM7Rpw==/109951173451146606.jpg"
   },
   {
     "id": "17429985859",
@@ -380,29 +335,19 @@
     "cover": "https://p2.music.126.net/GPnmetEG1WK7-60EtEqo1Q==/109951173097948171.jpg"
   },
   {
-    "id": "18088651885",
-    "name": "【沉浸式纯音】春潮入梦｜万物生长的声音",
-    "cover": "https://p2.music.126.net/OWZkKkAlBBxB0_-9sM7Rpw==/109951173451146606.jpg"
+    "id": "18063256295",
+    "name": "冰镇欧美嗓音｜夏日祛暑凉方",
+    "cover": "https://p2.music.126.net/0bWzwVbPb7t_xh71c7W05g==/109951173408491441.jpg"
   },
   {
     "id": "18044533175",
     "name": "二次元神曲大集结 一秒飙升情绪燃点",
-    "cover": "https://p2.music.126.net/fxL19SOkE20AwBspVHRusg==/109951173414185595.jpg"
-  },
-  {
-    "id": "18063256295",
-    "name": "冰镇欧美嗓音｜夏日祛暑凉方",
-    "cover": "https://p1.music.126.net/0bWzwVbPb7t_xh71c7W05g==/109951173408491441.jpg"
+    "cover": "https://p1.music.126.net/fxL19SOkE20AwBspVHRusg==/109951173414185595.jpg"
   },
   {
     "id": "17927758606",
     "name": "打工人嘴替英文版｜副歌裂变式收割多巴胺",
     "cover": "https://p1.music.126.net/m0Pck_MlFt52Czmt1birmw==/109951173136564628.jpg"
-  },
-  {
-    "id": "26467411",
-    "name": "那些你熟悉却又不知道名字的轻音乐",
-    "cover": "https://p1.music.126.net/8fQ9jzTJnMweLNm7VoyPSw==/6623458045881301.jpg"
   },
   {
     "id": "17976388624",
@@ -415,11 +360,6 @@
     "cover": "https://p2.music.126.net/4vCKu4uf-YKnwjnuocHojg==/109951173179605150.jpg"
   },
   {
-    "id": "18019691200",
-    "name": "日本当代 R&B  | 从黄金时代到另类声景",
-    "cover": "https://p1.music.126.net/EuUDSq5oPV_h4z_OURndFQ==/109951173336173929.jpg"
-  },
-  {
     "id": "17915352602",
     "name": "R&B｜丝滑 舒适 慵懒与暧昧氛围",
     "cover": "https://p1.music.126.net/6LDDK_H5l33TmVtrPB3zWA==/109951173151686213.jpg"
@@ -430,29 +370,29 @@
     "cover": "https://p1.music.126.net/r6URah08E7rmIxZf8039ug==/109951173052687728.jpg"
   },
   {
-    "id": "17867540093",
-    "name": "轻音乐/我生命里那磅礴的绿 终成哗然的春",
-    "cover": "https://p2.music.126.net/Lc27gYzv2eaVlMJlYVoM0w==/109951172975407197.jpg"
-  },
-  {
-    "id": "14361117262",
-    "name": "他泰｜旋律一响 让你想起了哪些剧",
-    "cover": "https://p1.music.126.net/z_OAPnxHgYGayJU7kIt8mw==/109951173193432838.jpg"
-  },
-  {
-    "id": "17974209281",
-    "name": "「R&B」午夜低音，沙发上的慵懒气泡",
-    "cover": "https://p1.music.126.net/2I44XRfIvCQCdKWl-bhT4A==/109951173254153382.jpg"
-  },
-  {
     "id": "18031402205",
     "name": "KPOP舞力全开 || 跟着元气节拍嗨跳",
     "cover": "https://p1.music.126.net/sfP_UXQYFk23wRcGlbSncw==/109951173368664305.jpg"
   },
   {
+    "id": "17867540093",
+    "name": "轻音乐/我生命里那磅礴的绿 终成哗然的春",
+    "cover": "https://p1.music.126.net/Lc27gYzv2eaVlMJlYVoM0w==/109951172975407197.jpg"
+  },
+  {
+    "id": "14343553499",
+    "name": "看小说/写小说可听纯音乐",
+    "cover": "https://p1.music.126.net/7TKSUgDY87mtPUBCp7MFmw==/109951172607642948.jpg"
+  },
+  {
     "id": "18012662203",
     "name": "古风雅律｜一纸风雅 竹丝遗旧韵",
-    "cover": "https://p1.music.126.net/Nw5C9N4elhnAW_cBbVV0yg==/109951173322974804.jpg"
+    "cover": "https://p2.music.126.net/Nw5C9N4elhnAW_cBbVV0yg==/109951173322974804.jpg"
+  },
+  {
+    "id": "14361117262",
+    "name": "他泰｜旋律一响 让你想起了哪些剧",
+    "cover": "https://p1.music.126.net/z_OAPnxHgYGayJU7kIt8mw==/109951173193432838.jpg"
   },
   {
     "id": "17977084161",
@@ -467,7 +407,7 @@
   {
     "id": "17903798000",
     "name": "春核美学 | 坠入春潮与绿意的梦境",
-    "cover": "https://p1.music.126.net/rRdrtroWmfRAqLPUg6vcWw==/109951173226574134.jpg"
+    "cover": "https://p2.music.126.net/rRdrtroWmfRAqLPUg6vcWw==/109951173226574134.jpg"
   },
   {
     "id": "17891231090",
@@ -475,19 +415,24 @@
     "cover": "https://p2.music.126.net/m0NYwoMXlar2SJaUgnxTwQ==/109951173042723448.jpg"
   },
   {
-    "id": "17989448474",
-    "name": "生命力韩曲｜华丽殿堂里肆意生长的KPOP",
-    "cover": "https://p2.music.126.net/d6CWkRLUrPf16MsvXLWY5A==/109951173426372405.jpg"
-  },
-  {
     "id": "17813422123",
     "name": "健身歌单 | 高燃 Kpop+欧美 pop 流行合集",
     "cover": "https://p1.music.126.net/T3Q67oMuduPaG0IQMVZ1Vg==/109951173300257846.jpg"
   },
   {
+    "id": "17989448474",
+    "name": "生命力韩曲｜华丽殿堂里肆意生长的KPOP",
+    "cover": "https://p2.music.126.net/d6CWkRLUrPf16MsvXLWY5A==/109951173426372405.jpg"
+  },
+  {
+    "id": "17933683250",
+    "name": "Kpop安利向｜五六代男团仙曲取向挑战",
+    "cover": "https://p2.music.126.net/cPXLFIEUveeBiDbQx2akOQ==/109951173146455376.jpg"
+  },
+  {
     "id": "17962121963",
     "name": "金曲星空，凝望好莱坞90年代",
-    "cover": "https://p2.music.126.net/MqWHDubwq5H9VU7FlVtb2g==/109951173243564815.jpg"
+    "cover": "https://p1.music.126.net/MqWHDubwq5H9VU7FlVtb2g==/109951173243564815.jpg"
   },
   {
     "id": "17926407407",
@@ -497,6 +442,61 @@
   {
     "id": "17911892135",
     "name": "流行说唱 rap| 旋律与节奏的完美融合",
-    "cover": "https://p1.music.126.net/kiqexHGFmN0j0h-CfomElQ==/109951173098099632.jpg"
+    "cover": "https://p2.music.126.net/kiqexHGFmN0j0h-CfomElQ==/109951173098099632.jpg"
+  },
+  {
+    "id": "18016915540",
+    "name": "欧美丨夏日电子舞曲布洛芬",
+    "cover": "https://p2.music.126.net/OefQA5nxVIAzIhU00L3sPQ==/109951173332058595.jpg"
+  },
+  {
+    "id": "18019691200",
+    "name": "日本当代 R&B  | 从黄金时代到另类声景",
+    "cover": "https://p1.music.126.net/EuUDSq5oPV_h4z_OURndFQ==/109951173336173929.jpg"
+  },
+  {
+    "id": "17547157281",
+    "name": "【高级感纯音】坠入春潮 万物生机的梦境",
+    "cover": "https://p2.music.126.net/5AxYQDNKrHCepkBt0wknZg==/109951172438528900.jpg"
+  },
+  {
+    "id": "17971801443",
+    "name": "华语R&B｜微醺的傍晚 时间过得很慢",
+    "cover": "https://p2.music.126.net/YrnqPeYR8tIA-m4iA9hx1A==/109951173232662944.jpg"
+  },
+  {
+    "id": "17988654032",
+    "name": "中文情绪说唱丨你听见的每个字都是真的",
+    "cover": "https://p1.music.126.net/XaGJik1AGMq0Mda1tBC4aQ==/109951173273196554.jpg"
+  },
+  {
+    "id": "17926183356",
+    "name": "多巴胺氛围曲 | 少女 清新 前线必听曲！",
+    "cover": "https://p1.music.126.net/7IzFBR9V-idHypY2jqs1og==/109951173127535007.jpg"
+  },
+  {
+    "id": "17924977911",
+    "name": "森系/infp治愈区 坠入春潮与绿意的梦境",
+    "cover": "https://p1.music.126.net/6gGEst9bAdg_Pgg6WHEmug==/109951173124574539.jpg"
+  },
+  {
+    "id": "17927449740",
+    "name": "前线少女必听曲 | 阳光 活力 清新 氛围曲",
+    "cover": "https://p2.music.126.net/dqta7RrhaEEGVMQTb9GoqQ==/109951173130629022.jpg"
+  },
+  {
+    "id": "17974209281",
+    "name": "「R&B」午夜低音，沙发上的慵懒气泡",
+    "cover": "https://p2.music.126.net/2I44XRfIvCQCdKWl-bhT4A==/109951173254153382.jpg"
+  },
+  {
+    "id": "17992714868",
+    "name": "2026全美音乐奖·球厂获奖名册",
+    "cover": "https://p2.music.126.net/GQKjdphzSiPtMfH5SXf-XQ==/109951173280994012.jpg"
+  },
+  {
+    "id": "17966316142",
+    "name": "梦境睡眠 | 轻音乐 沉浸 迷雾 梦境 安静感",
+    "cover": "https://p2.music.126.net/BCnqEYpvGqoVrkELxmO1Ww==/109951173228610623.jpg"
   }
 ]
