@@ -144,6 +144,14 @@ function onTimeUpdate() {
 }
 
 function onEnded() {
+  if (state.playMode === 'single') {
+    const audio = audioRef.value
+    if (audio) {
+      audio.currentTime = 0
+      audio.play()
+    }
+    return
+  }
   props.store.nextTrack()
 }
 </script>
