@@ -366,6 +366,7 @@ const totalCompletions = computed(() => {
   display: grid;
   grid-template-rows: repeat(7, 1fr);
   gap: 2px;
+  padding: 5px 0 5px 0;
 }
 
 /* 格子 */
