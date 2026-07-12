@@ -15,7 +15,7 @@ import { usePlayerStore } from './stores/playerStore'
 const store = usePlayerStore()
 const currentView = ref('home')
 const tabBarVisible = computed(() => currentView.value !== 'profile')
-const playerViews = ['music', 'profile', 'accounting']
+const playerViews = ['music']
 const showMiniPlayer = computed(() => playerViews.includes(currentView.value))
 
 // 离开音乐/个人页时自动关闭全屏播放器
