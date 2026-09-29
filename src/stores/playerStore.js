@@ -3,6 +3,7 @@ import { fetchTrackDetails, searchSource } from '../features/music/musicApi';
 import { createLibrarySnapshot, deserializeTrack, loadLibrary, saveLibrary } from '../features/music/libraryStorage';
 import { fetchPlaylistTracks, fetchDiscoverPlaylists, refreshPlaylists } from '../features/music/recommendedPlaylists';
 import { parseLrc } from '../utils/lyrics';
+import { downloadTrack } from '../features/music/download';
 
 const persisted = loadLibrary();
 
@@ -97,7 +98,8 @@ function usePlayerStore() {
     loadMoreSavedPlaylistTracks,
     loadInitialSavedPlaylistTracks,
     resetSkipCounter,
-    clearPlayHistory
+    clearPlayHistory,
+    downloadCurrentTrack
   };
 }
 
@@ -561,6 +563,35 @@ function clearPlayHistory() {
   state.playHistory = [];
   save();
   showToast('历史记录已清空');
+}
+
+async function downloadCurrentTrack() {
+  const track = state.currentTrack;
+  if (!track) {
+    showToast('没有正在播放的歌曲');
+    return;
+  }
+
+  try {
+    await fetchTrackDetails(track);
+  } catch (error) {
+    console.warn('resolve download details failed', error);
+  }
+
+  if (!track.audioUrl) {
+    showToast('这首歌没有可用音源');
+    return;
+  }
+
+  showToast('开始下载');
+  try {
+    const result = await downloadTrack(track);
+    if (result === 'cancelled') return;
+    showToast('下载完成');
+  } catch (error) {
+    console.warn('download failed', error);
+    showToast('下载失败');
+  }
 }
 
 function showToast(message) {

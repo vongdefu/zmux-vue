@@ -202,6 +202,7 @@ function onEnded() {
         <IconButton label="播放或暂停" tone="primary" @click.stop="togglePlay">{{ state.isPlaying ? 'Ⅱ' : '▶' }}</IconButton>
         <IconButton label="下一首" @click.stop="props.store.nextTrack">››</IconButton>
         <IconButton label="收藏" :active="props.store.isFavorite(state.currentTrack)" @click.stop="props.store.toggleFavorite()">{{ props.store.isFavorite(state.currentTrack) ? '♥' : '♡' }}</IconButton>
+        <IconButton label="下载" @click.stop="props.store.downloadCurrentTrack">↓</IconButton>
         <div class="mini-volume-wrap">
           <IconButton label="音量" @click.stop="showVolume = !showVolume">◐</IconButton>
           <Transition name="vol-pop">
@@ -259,6 +260,7 @@ function onEnded() {
           <IconButton label="播放或暂停" tone="primary" @click="togglePlay">{{ state.isPlaying ? 'Ⅱ' : '▶' }}</IconButton>
           <IconButton label="下一首" @click="props.store.nextTrack">››</IconButton>
           <IconButton label="收藏" :active="props.store.isFavorite(state.currentTrack)" @click="props.store.toggleFavorite()">{{ props.store.isFavorite(state.currentTrack) ? '♥' : '♡' }}</IconButton>
+          <IconButton label="下载" @click="props.store.downloadCurrentTrack">↓</IconButton>
           <div class="mini-volume-wrap">
             <IconButton label="音量" @click.stop="showVolume = !showVolume">◐</IconButton>
             <Transition name="vol-pop">
@@ -360,7 +362,7 @@ function onEnded() {
 .mini-controls {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
 }
 
 .mini-volume-wrap {
