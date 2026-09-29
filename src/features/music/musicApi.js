@@ -152,16 +152,18 @@ export async function searchSource(source, keyword, options) {
 
 const CACHE_TTL = 30 * 60 * 1000; // 30 分钟缓存有效期
 
-export async function fetchTrackDetails(track) {
+export async function fetchTrackDetails(track, { force = false } = {}) {
   if (!track) return track;
 
-  // 已有有效缓存（30 分钟内）→ 直接返回，不发请求
-  if (track.detailsLoaded && track.audioUrl && track.detailsFetchedAt) {
-    const age = Date.now() - track.detailsFetchedAt;
-    if (age < CACHE_TTL) return track;
+  if (!force) {
+    // 已有有效缓存（30 分钟内）→ 直接返回，不发请求
+    if (track.detailsLoaded && track.audioUrl && track.detailsFetchedAt) {
+      const age = Date.now() - track.detailsFetchedAt;
+      if (age < CACHE_TTL) return track;
+    }
+    // 已有详情且音频 URL 可用（同一次会话中已请求过）
+    if (track.detailsLoaded && track.audioUrl && (track.lrc || !track.lrcUrl)) return track;
   }
-  // 已有详情且音频 URL 可用（同一次会话中已请求过）
-  if (track.detailsLoaded && track.audioUrl && (track.lrc || !track.lrcUrl)) return track;
 
   if (track.source === 'netease') return fetchNeteaseDetails(track);
   if (track.source === 'kuwo') return fetchKuwoDetails(track);

@@ -1,7 +1,11 @@
+import { fetchTrackDetails } from './musicApi';
+
 const AUDIO_EXTS = new Set([
   'mp3', 'flac', 'wav', 'ape', 'alac', 'aiff',
   'm4a', 'aac', 'ogg', 'opus', 'wma'
 ]);
+
+const ILLEGAL_CHARS = /[/\\:*?"<>|]/;
 
 function detectExtension(url) {
   if (!url) return 'mp3';
@@ -9,8 +13,6 @@ function detectExtension(url) {
   const ext = (base.match(/\.([a-z0-9]+)$/) || [])[1] || '';
   return AUDIO_EXTS.has(ext) ? ext : 'mp3';
 }
-
-const ILLEGAL_CHARS = /[/\\:*?"<>|]/;
 
 function sanitizeFilename(name) {
   return String(name || '')
@@ -29,27 +31,58 @@ export function buildDownloadFilename(track) {
   return `${base}.${ext}`;
 }
 
-export async function downloadTrack(track) {
-  const response = await fetch(track.audioUrl);
+// 部分音源（如 QQ）返回 http:// 链接，https 页面下会被混合内容策略拦截，统一升级为 https
+function toHttps(url) {
+  return typeof url === 'string' && url.startsWith('http://')
+    ? 'https://' + url.slice('http://'.length)
+    : url;
+}
+
+async function fetchBlob(url) {
+  const response = await fetch(url);
   if (!response.ok) throw new Error(`HTTP ${response.status}`);
-  const blob = await response.blob();
+  return response.blob();
+}
+
+// 先试已有音源链接，失败再强制重新解析一次（应对 QQ/JOOX 签名过期）
+async function resolveAndFetch(track) {
+  if (track.audioUrl) {
+    try {
+      return await fetchBlob(toHttps(track.audioUrl));
+    } catch (error) {
+      console.warn('首次下载失败，尝试重新解析音源', error);
+    }
+  }
+
+  await fetchTrackDetails(track, { force: true });
+  const url = toHttps(track.audioUrl);
+  if (!url) throw new Error('no audio url');
+  return fetchBlob(url);
+}
+
+export async function downloadTrack(track) {
   const filename = buildDownloadFilename(track);
 
-  // Chrome/Edge：弹系统「另存为」对话框，用户选位置
+  // Chrome/Edge：先弹「另存为」对话框。showSaveFilePicker 必须在用户手势内调用，
+  // 否则会抛 SecurityError；所以这里先拿句柄，之后再去解析和下载。
   if (typeof window.showSaveFilePicker === 'function') {
+    let handle;
     try {
-      const handle = await window.showSaveFilePicker({ suggestedName: filename });
-      const writable = await handle.createWritable();
-      await writable.write(blob);
-      await writable.close();
-      return 'saved';
+      handle = await window.showSaveFilePicker({ suggestedName: filename });
     } catch (error) {
       if (error?.name === 'AbortError') return 'cancelled';
       throw error;
     }
+
+    const blob = await resolveAndFetch(track);
+    const writable = await handle.createWritable();
+    await writable.write(blob);
+    await writable.close();
+    return 'saved';
   }
 
   // 其他浏览器：落到默认下载目录
+  const blob = await resolveAndFetch(track);
   const objectUrl = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = objectUrl;

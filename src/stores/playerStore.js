@@ -572,17 +572,6 @@ async function downloadCurrentTrack() {
     return;
   }
 
-  try {
-    await fetchTrackDetails(track);
-  } catch (error) {
-    console.warn('resolve download details failed', error);
-  }
-
-  if (!track.audioUrl) {
-    showToast('这首歌没有可用音源');
-    return;
-  }
-
   showToast('开始下载');
   try {
     const result = await downloadTrack(track);
@@ -590,7 +579,7 @@ async function downloadCurrentTrack() {
     showToast('下载完成');
   } catch (error) {
     console.warn('download failed', error);
-    showToast('下载失败');
+    showToast(error?.message === 'no audio url' ? '这首歌没有可用音源' : '下载失败');
   }
 }
 
