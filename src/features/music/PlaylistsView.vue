@@ -46,6 +46,14 @@ function onDeletePlaylist(id) {
   if (selectedId.value === id) selectedId.value = ""
 }
 
+function onDownloadPlaylist() {
+  if (props.store.state.downloading) {
+    props.store.cancelDownload()
+  } else {
+    props.store.downloadPlaylist(selectedId.value)
+  }
+}
+
 const selectedPlaylist = computed(() =>
   props.store.state.playlists.find(p => p.id === selectedId.value) || null
 )
@@ -110,6 +118,9 @@ function coverGradient(name) {
       <div class="detail-header">
         <h2>{{ selectedPlaylist?.name || '' }}</h2>
         <span class="detail-count">{{ selectedPlaylist?.tracks.length || 0 }} 首</span>
+        <button class="dl-btn" @click="onDownloadPlaylist">
+          {{ store.state.downloading ? `取消下载 ${store.state.downloadProgress.done}/${store.state.downloadProgress.total}` : '下载歌单' }}
+        </button>
         <button class="del-btn" @click="onDeletePlaylist(selectedId)">删除歌单</button>
       </div>
 
@@ -300,6 +311,12 @@ function coverGradient(name) {
   border: 0; border-radius: 8px; padding: 6px 14px;
   background: rgba(236,65,65,0.08); color: var(--accent);
   font-size: 13px; font-weight: 700; cursor: pointer; flex-shrink: 0;
+}
+.dl-btn {
+  border: 0; border-radius: 8px; padding: 6px 14px;
+  background: rgba(236,65,65,0.08); color: var(--accent);
+  font-size: 13px; font-weight: 700; cursor: pointer; flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .load-more-btn {

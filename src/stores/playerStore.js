@@ -3,7 +3,7 @@ import { fetchTrackDetails, searchSource } from '../features/music/musicApi';
 import { createLibrarySnapshot, deserializeTrack, loadLibrary, saveLibrary } from '../features/music/libraryStorage';
 import { fetchPlaylistTracks, fetchDiscoverPlaylists, refreshPlaylists } from '../features/music/recommendedPlaylists';
 import { parseLrc } from '../utils/lyrics';
-import { downloadTrack } from '../features/music/download';
+import { downloadTrack, downloadTracks } from '../features/music/download';
 
 const persisted = loadLibrary();
 
@@ -38,7 +38,9 @@ const state = reactive({
   toast: '',
   recommendedPlaylists: [],
   recommendedLoading: false,
-  consecutiveSkipCount: 0
+  consecutiveSkipCount: 0,
+  downloading: false,
+  downloadProgress: { done: 0, total: 0 }
 });
 
 rebuildTrackMap();
@@ -61,6 +63,7 @@ const activeLyrics = computed(() => state.lyrics.map((line, index) => ({
 })));
 
 let toastTimer = null;
+let downloadCancelled = false;
 
 function usePlayerStore() {
   return {
@@ -99,7 +102,9 @@ function usePlayerStore() {
     loadInitialSavedPlaylistTracks,
     resetSkipCounter,
     clearPlayHistory,
-    downloadCurrentTrack
+    downloadCurrentTrack,
+    downloadPlaylist,
+    cancelDownload
   };
 }
 
@@ -581,6 +586,61 @@ async function downloadCurrentTrack() {
     console.warn('download failed', error);
     showToast(error?.message === 'no audio url' ? '这首歌没有可用音源' : '下载失败');
   }
+}
+
+async function downloadPlaylist(playlistId) {
+  if (state.downloading) {
+    showToast('正在下载中，请稍候');
+    return;
+  }
+
+  const playlist = state.playlists.find((item) => item.id === playlistId);
+  if (!playlist) {
+    showToast('歌单未找到');
+    return;
+  }
+
+  // 全量数据源：引用型歌单用已加载的 _tracksBuffer，自建歌单用 tracks
+  const list = playlist._tracksBuffer || playlist.tracks || [];
+  if (!list.length) {
+    showToast('歌单没有可下载的歌曲');
+    return;
+  }
+
+  state.downloading = true;
+  state.downloadProgress = { done: 0, total: list.length };
+  downloadCancelled = false;
+  showToast(`开始下载 ${list.length} 首`);
+
+  try {
+    const summary = await downloadTracks(list, {
+      playlistName: playlist.name,
+      onProgress: ({ done, total }) => {
+        state.downloadProgress = { done, total };
+      },
+      isCancelled: () => downloadCancelled
+    });
+
+    if (summary.cancelled) {
+      showToast(`已取消下载（音频 ${summary.audio}，歌词 ${summary.lrc}）`);
+    } else {
+      const parts = [`音频 ${summary.audio}`, `歌词 ${summary.lrc}`];
+      if (summary.skipped) parts.push(`跳过 ${summary.skipped}`);
+      if (summary.failed.length) parts.push(`失败 ${summary.failed.length}`);
+      showToast(`下载完成：${parts.join(' / ')}`);
+    }
+  } catch (error) {
+    console.warn('批量下载失败', error);
+    showToast('批量下载失败');
+  } finally {
+    state.downloading = false;
+    downloadCancelled = false;
+  }
+}
+
+function cancelDownload() {
+  downloadCancelled = true;
+  showToast('正在取消下载…');
 }
 
 function showToast(message) {
